@@ -1,0 +1,29 @@
+@import "/src/variables";
+
+.layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px;
+  height: 56px;
+  z-index: 1;
+
+  box-sizing: border-box;
+
+  .title {
+    color: $color-black-01;
+
+    /* Pretendard/Headline/3 */
+
+    font-family: "Pretendard";
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
