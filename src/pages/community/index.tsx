@@ -1,6 +1,7 @@
 import Header from "../../components/header";
 import search_icon from "../../assets/icons/search.svg";
 import profile_icon from "../../assets/icons/profile.svg";
+import Categories from "./components/categories-section";
 import "./index.scss";
 
 function Community() {
@@ -13,6 +14,7 @@ function Community() {
         </div>
       </Header>
       this is community page
+      <Categories />
     </div>
   );
 }
