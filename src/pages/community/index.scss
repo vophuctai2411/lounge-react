@@ -1,8 +1,12 @@
 .community {
+  background-color: rgb(249, 250, 251);
   .header-icons {
     width: 80px;
     display: flex;
     align-items: center;
     justify-content: space-around;
+  }
+  .posts {
+    margin-top: 56px; //variable for header height
   }
 }

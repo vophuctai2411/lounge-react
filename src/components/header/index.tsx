@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "../../types/prop-with-children.type";
+import { PropsWithChildren } from "@/types/prop-with-children.type";
 import "./index.scss";
 
 type HeaderProps = {

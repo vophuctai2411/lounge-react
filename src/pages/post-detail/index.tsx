@@ -1,25 +1,25 @@
 import Header from "@/components/header";
 import search_icon from "@/assets/icons/search.svg";
 import profile_icon from "@/assets/icons/profile.svg";
-import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
 
-function Community() {
+function PostDetail() {
   return (
-    <div className="community">
+    <div className="post_detail">
       <Header>
         <div className="header-icons">
           <img src={search_icon} alt="search icon" />
           <img src={profile_icon} alt="profile icon" />
         </div>
       </Header>
-      <div className="posts">
-        <Categories />
+      <div className="comment_container">
         <PostList />
       </div>
+
+      <div className="comment_writer"></div>
     </div>
   );
 }
 
-export default Community;
+export default PostDetail;

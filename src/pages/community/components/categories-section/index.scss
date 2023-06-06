@@ -1,0 +1,40 @@
+.categories_section {
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+
+  .filter_adjustment {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    margin-right: 8px;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    background-color: transparent;
+    border-style: none;
+  }
+
+  .filter_categories_list {
+    display: flex;
+    align-items: center;
+    overflow-x: scroll;
+
+    label {
+      display: block;
+      height: 44px;
+      //padding: 13px 20px;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      color: #afb8c3;
+      margin-right: 8px;
+    }
+  }
+}
