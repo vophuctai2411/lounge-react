@@ -3,6 +3,7 @@ import Community from "./community";
 import PostDetail from "./post-detail";
 import Searching from "./searching";
 import PostWriter from "./write-post";
+import Profile from "./profile";
 
 const pagesData: routerType[] = [
   {
@@ -24,6 +25,11 @@ const pagesData: routerType[] = [
     path: "postwriter",
     element: <PostWriter />,
     title: "postwriter",
+  },
+  {
+    path: "profile",
+    element: <Profile />,
+    title: "profile",
   },
 ];
 

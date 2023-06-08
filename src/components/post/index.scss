@@ -109,3 +109,26 @@
     }
   }
 }
+
+.post_img {
+  margin: 0px 0px 10px 16px;
+  display: flex;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scrollbar-width: none; //firefox
+  &::-webkit-scrollbar {
+    display: none; //Chrome, safari, opera
+  }
+
+  img {
+    min-width: 120px;
+    width: 120px;
+    height: 120px;
+    margin-right: 10px;
+    border: 1px solid #f0f2f4;
+    border-radius: 16px;
+    -o-object-fit: cover;
+    object-fit: cover;
+  }
+}

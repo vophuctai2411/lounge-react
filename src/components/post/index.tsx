@@ -24,7 +24,32 @@ function Post() {
         </div>
       </div>
 
-      <div data-v-27512d9c className="board_row">
+      <div style={{ display: "inline-block", maxWidth: "100%" }}>
+        <div data-v-27512d9c className="post_img">
+          <img
+            data-v-27512d9c
+            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970427_63f489bbe2d51.jpeg"
+            alt="이미지"
+          />
+          <img
+            data-v-27512d9c
+            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc5131b.jpeg"
+            alt="이미지"
+          />
+          <img
+            data-v-27512d9c
+            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc6ec29.jpeg"
+            alt="이미지"
+          />
+          <img
+            data-v-27512d9c
+            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc7edb7.png"
+            alt="이미지"
+          />
+        </div>
+      </div>
+
+      <div className="board_row">
         <div
           data-v-27512d9c
           className="post_content"
@@ -34,9 +59,13 @@ function Post() {
             position: "relative",
           }}
         >
-          <p data-v-27512d9c>T001</p>
+          <p data-v-27512d9c>
+            내용수정 합니다ㅏ 카테고리 가족이야기에서 물물교환으로 수정 로딩모달
+            테스트 수정
+          </p>
         </div>
       </div>
+
       <div data-v-27512d9c className="board_row">
         <div data-v-27512d9c className="post_info">
           <div data-v-27512d9c>

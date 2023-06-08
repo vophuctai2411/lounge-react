@@ -4,14 +4,19 @@ import profile_icon from "@/assets/icons/profile.svg";
 import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
+import { Link } from "react-router-dom";
 
 function Community() {
   return (
     <div className="community">
       <Header>
         <div className="header-icons">
-          <img src={search_icon} alt="search icon" />
-          <img src={profile_icon} alt="profile icon" />
+          <Link to="/search">
+            <img src={search_icon} alt="search icon" />
+          </Link>
+          <Link to="/profile">
+            <img src={profile_icon} alt="profile icon" />
+          </Link>
         </div>
       </Header>
       <div className="posts">
