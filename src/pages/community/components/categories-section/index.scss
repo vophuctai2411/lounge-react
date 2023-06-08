@@ -18,6 +18,11 @@
     display: flex;
     align-items: center;
     overflow-x: scroll;
+    -ms-overflow-style: none; //IE and Edge
+    scrollbar-width: none; //firefox
+    &::-webkit-scrollbar {
+      display: none; //Chrome, safari, opera
+    }
 
     li {
       margin-right: 8px;

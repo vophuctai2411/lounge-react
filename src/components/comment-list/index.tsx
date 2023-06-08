@@ -1,6 +1,5 @@
 import "./index.scss";
 import Comment from "@/components/comment";
-import { Radio } from "antd";
 import { useState } from "react";
 
 function CommentList() {
@@ -159,13 +158,13 @@ function CommentList() {
 
   return (
     <>
-      <Radio.Group defaultValue="a" size="small" style={{ marginTop: 16 }}>
+      Radio
+      {/*   <Radio.Group defaultValue="a" size="small" style={{ marginTop: 16 }}>
         <Radio.Button value="a">Hangzhou</Radio.Button>
         <Radio.Button value="b">Shanghai</Radio.Button>
         <Radio.Button value="c">Beijing</Radio.Button>
         <Radio.Button value="d">Chengdu</Radio.Button>
-      </Radio.Group>
-
+      </Radio.Group> */}
       <div className="comment_content">
         <Comment />
       </div>

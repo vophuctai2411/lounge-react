@@ -1,128 +1,66 @@
 import { get_all_categories } from "@/services/community";
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Radio } from "antd";
 import filter_icon from "@/assets/icons/filter.svg";
+import CategoryFilterModal from "../category-filter-modal";
+import { categoryType } from "@/types/components.type";
 
 function Categories() {
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: "가족이야기",
-    },
-    {
-      id: 2,
-      name: "물물교환",
-    },
-    {
-      id: 3,
-      name: "결혼생활",
-    },
-    {
-      id: 4,
-      name: "임신·출산",
-    },
-    {
-      id: 6,
-      name: "연애",
-    },
-    {
-      id: 7,
-      name: "일상·생각",
-    },
-    {
-      id: 8,
-      name: "취미생활",
-    },
-    {
-      id: 9,
-      name: "레시피공유",
-    },
-    {
-      id: 10,
-      name: "반려동물",
-    },
-  ]);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [categories, setCategories] = useState<categoryType[]>([]);
+
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
   useEffect(() => {
-    get_all_categories();
+    const getData = async () => {
+      const response = await get_all_categories();
+      if (response.status == 200 && response.data.success)
+        setCategories(response.data.postCategories);
+    };
+
+    getData();
   }, []);
 
   return (
     <div className="categories_section">
-      <button className="filter_adjustment">
+      <button
+        className="filter_adjustment"
+        onClick={() => setIsOpenModal(true)}
+      >
         <img src={filter_icon} alt="filter icon" />
       </button>
 
-      {/* <Radio.Group defaultValue={0} className="filter_categories_list">
-        <Radio.Button value={0}>연애</Radio.Button>
-        {categories.map((i) => (
-          <Radio.Button value={i.id}>{i.name}</Radio.Button>
-        ))}
-      </Radio.Group> */}
-
-      <ul data-v-62d41194 className="filter_category_list">
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_0" defaultValue={0} />
-          <label data-v-62d41194 htmlFor="bar_0">
-            전체
-          </label>
+      <ul className="filter_category_list">
+        <li key="0">
+          <input type="radio" id="0" name="postCategoryGroup" />
+          <label htmlFor="0">전체</label>
         </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_3" defaultValue={3} />
-          <label data-v-62d41194 htmlFor="bar_3">
-            결혼생활
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_8" defaultValue={8} />
-          <label data-v-62d41194 htmlFor="bar_8">
-            취미생활
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_9" defaultValue={9} />
-          <label data-v-62d41194 htmlFor="bar_9">
-            레시피공유
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_1" defaultValue={1} />
-          <label data-v-62d41194 htmlFor="bar_1">
-            가족이야기
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_2" defaultValue={2} />
-          <label data-v-62d41194 htmlFor="bar_2">
-            물물교환
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_4" defaultValue={4} />
-          <label data-v-62d41194 htmlFor="bar_4">
-            임신·출산
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_6" defaultValue={6} />
-          <label data-v-62d41194 htmlFor="bar_6">
-            연애
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_7" defaultValue={7} />
-          <label data-v-62d41194 htmlFor="bar_7">
-            일상·생각
-          </label>
-        </li>
-        <li data-v-62d41194>
-          <input data-v-62d41194 type="radio" id="bar_10" defaultValue={10} />
-          <label data-v-62d41194 htmlFor="bar_10">
-            반려동물
-          </label>
-        </li>
+        {categories.map((i) => {
+          const key_prefix = `category_list-`;
+          if (selectedCategories.includes(i.id)) {
+            const category_list_key = key_prefix + `${i.id}`;
+            return (
+              <li key={category_list_key}>
+                <input
+                  type="radio"
+                  id={category_list_key}
+                  name="postCategoryGroup"
+                />
+                <label htmlFor={category_list_key}>{i.name}</label>
+              </li>
+            );
+          }
+        })}
       </ul>
+
+      {isOpenModal && (
+        <CategoryFilterModal
+          categories={categories}
+          setIsOpenModal={setIsOpenModal}
+          selectedCategories={selectedCategories}
+          saveSelection={setSelectedCategories}
+        />
+      )}
     </div>
   );
 }
