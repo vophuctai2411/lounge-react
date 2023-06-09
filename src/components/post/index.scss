@@ -82,30 +82,6 @@
       padding: 16px 0;
       display: flex;
       justify-content: space-around;
-
-      button {
-        background-color: transparent;
-        border-style: none;
-      }
-
-      .post_reaction_btn {
-        display: flex;
-        align-items: center;
-        padding: 4px;
-
-        .post_reaction_img {
-          width: 24px;
-          height: 24px;
-        }
-
-        .post_reaction_text {
-          font-weight: 500;
-          font-size: 14px;
-          line-height: 18px;
-          font-family: "Pretendard";
-          color: #afb8c3;
-        }
-      }
     }
   }
 }
@@ -130,5 +106,22 @@
     border-radius: 16px;
     -o-object-fit: cover;
     object-fit: cover;
+  }
+}
+
+.post_comment_btn[data-v-27512d9c] {
+  display: flex;
+  align-items: center;
+
+  img[data-v-27512d9c] {
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
+  }
+
+  span[data-v-27512d9c] {
+    font-weight: 500;
+    font-size: 14px;
+    color: #afb8c3;
   }
 }

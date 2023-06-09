@@ -4,20 +4,91 @@ import comment_icon from "@/assets/icons/comment.svg";
 import like_icon from "@/assets/icons/like.svg";
 import dislike_icon from "@/assets/icons/dislike.svg";
 import star_icon from "@/assets/icons/star.svg";
+import Reaction from "@/components/reaction";
 
 function Post() {
+  const data = {
+    id: 2149,
+    subject: "default subject",
+    content:
+      "\ub4f1\ub85d \uac24\ub7ec\ub9ac \ud14c\uc2a4\ud2b8\r\n\r\n\uc218\uc815\ub3c4 \ud14c\uc2a4\ud2b8\r\n\r\n\uc11d\ub958\uc0ad\uc81c \ucfe0\ud0a4\ucd94\uac00",
+    post_category_id: 1,
+    view_count: 34,
+    board_id: 1,
+    user_id: 14,
+    is_secret: 0,
+    is_draft: 0,
+    created_at: "2023-03-30 14:15:00",
+    updated_at: "2023-03-30 14:15:54",
+    comments_count: 1,
+    user: {
+      id: 14,
+      name: "universe000",
+      level: 1,
+      profile_image: {
+        id: 295,
+        user_id: 14,
+        url: "https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262601_640841499ba35.jpeg",
+        url_180:
+          "https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262602_6408414a8c51a.jpeg",
+        url_340:
+          "https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262602_6408414aa8285.jpeg",
+        url_720:
+          "https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262602_6408414ac78ff.jpeg",
+        url_1024:
+          "https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262602_6408414aea311.jpeg",
+      },
+      media: null,
+    },
+    is_auth_user_liked: false,
+    is_auth_user_disliked: true,
+    is_auth_user_picked: false,
+    emotion: {
+      like: 0,
+      dislike: 1,
+    },
+    picker_count: 0,
+    images: [
+      {
+        id: 319,
+        post_id: 2149,
+        url: "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153301_64251ad54cd6c.jpeg",
+        url_180:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153301_64251ad555bdb.jpeg",
+        url_340:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153301_64251ad55f73b.jpeg",
+        url_720:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153301_64251ad5626b1.jpeg",
+        url_1024:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153301_64251ad56588d.jpeg",
+      },
+      {
+        id: 320,
+        post_id: 2149,
+        url: "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153353_64251b09cd64f.jpeg",
+        url_180:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153353_64251b09e3129.jpeg",
+        url_340:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153353_64251b09ebeff.jpeg",
+        url_720:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153353_64251b09eeaf6.jpeg",
+        url_1024:
+          "https://loungest.blob.core.windows.net/lounge/images/2/2023/3/30/1680153353_64251b09f2f4d.jpeg",
+      },
+    ],
+    videos: [],
+  };
   return (
-    <div data-v-27512d9c data-v-59cf3461 className="post_container">
-      <div data-v-27512d9c className="board_row">
-        <div data-v-27512d9c className="post_user_profile">
+    <div className="post_container">
+      <div className="board_row">
+        <div className="post_user_profile">
           <img
-            data-v-27512d9c
-            src="https://loungest.blob.core.windows.net/lounge/images/1/2023/3/8/1678262602_6408414a8c51a.jpeg"
+            src={data.user.profile_image.url_180 || data.user.profile_image.url}
             alt="프로필 이미지"
           />
-          <div data-v-27512d9c>
-            <p data-v-27512d9c> universe000 </p>
-            <span data-v-0e1f7c79 data-v-27512d9c className="post_chip">
+          <div>
+            <p> universe000 </p>
+            <span data-v-0e1f7c79 className="post_chip">
               일상·생각
             </span>
           </div>
@@ -25,33 +96,19 @@ function Post() {
       </div>
 
       <div style={{ display: "inline-block", maxWidth: "100%" }}>
-        <div data-v-27512d9c className="post_img">
-          <img
-            data-v-27512d9c
-            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970427_63f489bbe2d51.jpeg"
-            alt="이미지"
-          />
-          <img
-            data-v-27512d9c
-            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc5131b.jpeg"
-            alt="이미지"
-          />
-          <img
-            data-v-27512d9c
-            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc6ec29.jpeg"
-            alt="이미지"
-          />
-          <img
-            data-v-27512d9c
-            src="https://loungest.blob.core.windows.net/lounge/images/2/2023/2/21/1676970428_63f489bc7edb7.png"
-            alt="이미지"
-          />
+        <div className="post_img">
+          {data.images.map((i) => (
+            <img
+              src={i.url_340 || i.url_720 || i.url}
+              alt="이미지"
+              key={Math.random()}
+            />
+          ))}
         </div>
       </div>
 
       <div className="board_row">
         <div
-          data-v-27512d9c
           className="post_content"
           style={{
             maxHeight: "72px",
@@ -59,60 +116,30 @@ function Post() {
             position: "relative",
           }}
         >
-          <p data-v-27512d9c>
-            내용수정 합니다ㅏ 카테고리 가족이야기에서 물물교환으로 수정 로딩모달
-            테스트 수정
-          </p>
+          <p>{data.content}</p>
         </div>
       </div>
 
-      <div data-v-27512d9c className="board_row">
-        <div data-v-27512d9c className="post_info">
-          <div data-v-27512d9c>
-            <img data-v-27512d9c src={eye_icon} alt="조회수" />
-            <span data-v-27512d9c id="postInterestViewCount">
-              37
-            </span>
+      <div className="board_row">
+        <div className="post_info">
+          <div>
+            <img src={eye_icon} alt="조회수" />
+            <span id="postInterestViewCount">37</span>
           </div>
-          <div data-v-27512d9c>
-            <img data-v-27512d9c src={star_icon} alt="찜하기" />
-            <span data-v-27512d9c id="postInterestBookmarkCount">
-              1
-            </span>
+          <div>
+            <img src={star_icon} alt="찜하기" />
+            <span id="postInterestBookmarkCount">1</span>
           </div>
-          <span data-v-27512d9c className="post_time">
-            4일 전
-          </span>
+          <span className="post_time">4일 전</span>
         </div>
       </div>
 
-      <div data-v-27512d9c className="board_row">
-        <div data-v-27512d9c className="post_activity">
-          <button data-v-5a31b1ea data-v-27512d9c className="post_reaction_btn">
-            <img
-              src={like_icon}
-              alt="like icon"
-              className="post_reaction_img"
-            />
-            <span data-v-5a31b1ea className="post_reaction_text">
-              좋아요
-            </span>
-          </button>
-
-          <button data-v-5a31b1ea data-v-27512d9c className="post_reaction_btn">
-            <img
-              src={dislike_icon}
-              alt="dislike icon"
-              className="post_reaction_img"
-            />
-            <span data-v-5a31b1ea className="post_reaction_text">
-              싫어요
-            </span>
-          </button>
-
-          <button data-v-27512d9c className="post_reaction_btn">
-            <img data-v-27512d9c src={comment_icon} alt="comment icon" />
-            <span className="post_reaction_text"> 12 </span>
+      <div className="board_row">
+        <div className="post_activity">
+          <Reaction />
+          <button className="post_comment_btn">
+            <img src={comment_icon} alt="댓글" />
+            <span> 1 </span>
           </button>
         </div>
       </div>

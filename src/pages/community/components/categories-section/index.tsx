@@ -14,8 +14,11 @@ function Categories() {
   useEffect(() => {
     const getData = async () => {
       const response = await get_all_categories();
-      if (response.status == 200 && response.data.success)
-        setCategories(response.data.postCategories);
+      if (response.status == 200 && response.data.success) {
+        const postCategories: categoryType[] = response.data.postCategories;
+        setCategories(postCategories);
+        setSelectedCategories(postCategories.map((i) => i.id));
+      }
     };
 
     getData();
