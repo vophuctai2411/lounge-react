@@ -5,8 +5,26 @@ import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { getAllPost } from "@/services/community";
 
 function Community() {
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      const params = {
+        searchText: "",
+        "postCategories[]": /* this.postCategories */ 2,
+        perPage: 30,
+        page: /* this.page */ 1,
+      };
+      const response = await getAllPost(params);
+      console.log(response);
+    };
+
+    getData();
+  }, []);
   return (
     <div className="community">
       <Header>
