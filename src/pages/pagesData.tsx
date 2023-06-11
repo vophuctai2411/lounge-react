@@ -7,7 +7,7 @@ import Profile from "./profile";
 
 const pagesData: routerType[] = [
   {
-    path: "",
+    path: "*",
     element: <Community />,
     title: "home",
   },
