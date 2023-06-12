@@ -2,110 +2,147 @@ import "./index.scss";
 import smiley_icon from "@/assets/icons/smiley.svg";
 import send_icon from "@/assets/icons/send.svg";
 import close_white_icon from "@/assets/icons/close_white.svg";
+import {
+  commentOnPost,
+  getAllEmoticonPackages,
+  get_All_Emoicon_By_PackageID,
+  commentIconOnPost,
+  getCommentsByPostID,
+} from "@/services/community";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-function CommentWriter() {
+function CommentWriter({ postID, parentID }: any) {
+  const [textValue, setTextValue] = useState("");
+  const [isShowIconModal, setIsShowIconModal] = useState(false);
+  const [selectedPackgeID, setSelectedPackageID] = useState();
+  const [chosenIcon, setChosenIcon] = useState();
+  const queryClient = useQueryClient();
+
+  const sendMessage = async () => {
+    let response;
+    if (chosenIcon !== undefined) {
+      const payload = {
+        emoticonId: chosenIcon?.id,
+        ...(parentID && { parentCommentId: parentID }),
+        size: 100,
+      };
+      response = await commentIconOnPost(postID, payload);
+    } else {
+      const payload = {
+        content: textValue,
+        ...(parentID && { parentCommentId: parentID }),
+      };
+      response = await commentOnPost(postID, payload);
+    }
+
+    if (response?.data?.success) {
+      setTextValue("");
+      setIsShowIconModal(false);
+      setChosenIcon(undefined);
+
+      useQuery({
+        queryKey: ["comments_Query", postID],
+        queryFn: () =>
+          getCommentsByPostID(postID).then(
+            (response) => response.data.comments
+          ),
+      });
+
+      getCommentsByPostID(postID).then((response) => {
+        const comments = response.data.comments;
+        queryClient.setQueryData(["comments_Query", postID], comments);
+      });
+    }
+  };
+
+  const { data: iconPackages } = useQuery({
+    queryKey: ["iconPackages_Query"],
+    queryFn: () =>
+      getAllEmoticonPackages().then(
+        (response: any) => response.data?.emoticonPackages?.data
+      ),
+    onSuccess: (data) => {
+      setSelectedPackageID(data[0].id);
+    },
+    staleTime: Infinity,
+  });
+
+  const { data: showIcons } = useQuery({
+    queryKey: ["iconsByPackgeID_Query", selectedPackgeID],
+    queryFn: () =>
+      get_All_Emoicon_By_PackageID(selectedPackgeID).then(
+        (response: any) => response.data?.emoticonPackage?.emoticons
+      ),
+    staleTime: Infinity,
+  });
+
   return (
     <>
       <div className="comment_write">
-        <div className="emoticon_preview">
-          <button>
-            <img src={close_white_icon} alt="닫기" />
-          </button>
-          <img
-            src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695881_640eddc919bb6.gif"
-            alt="이모티콘"
-          />
-        </div>
+        {isShowIconModal && chosenIcon && (
+          <div className="emoticon_preview">
+            <button onClick={() => setChosenIcon(undefined)}>
+              <img src={close_white_icon} alt="닫기" />
+            </button>
+            <img src={chosenIcon?.url_340} alt="이모티콘" />
+          </div>
+        )}
         <div>
           <textarea
             //type="text"
             placeholder="이모티콘 보내기"
-            defaultValue={""}
+            value={textValue}
+            onChange={(e) => setTextValue(e.target.value)}
+            onFocus={() => {
+              setIsShowIconModal(false);
+              setChosenIcon(undefined);
+            }}
           />
-          <button>
-            <img src={smiley_icon} alt="등록" />
-          </button>
-          <button>
+          {!textValue && (
+            <button onClick={() => setIsShowIconModal(true)}>
+              <img src={smiley_icon} alt="등록" />
+            </button>
+          )}
+          <button onClick={() => sendMessage()}>
             <img src={send_icon} alt="등록" />
           </button>
         </div>
       </div>
 
-      <div className="comment_emoticon">
-        <div className="emoticon_filter">
-          <ul>
-            <li className="active">
-              <div>
-                <img src="https://loungest.blob.core.windows.net/lounge/images/4/2023/3/13/1678695861_640eddb59cc14.png" />
-              </div>
-            </li>
-          </ul>
+      {isShowIconModal && (
+        <div className="comment_emoticon">
+          <div className="emoticon_filter">
+            <ul>
+              {iconPackages?.map((iconPackage: any) => (
+                <li
+                  key={`iconPackages-${iconPackage.id}`}
+                  onClick={() => {
+                    setSelectedPackageID(iconPackage.id);
+                  }}
+                  className={iconPackage.id == selectedPackgeID ? "active" : ""}
+                >
+                  <div>
+                    <img src={iconPackage.main_emoticon.url} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="emoticon_container">
+            <ul>
+              {showIcons?.map((emoicon: any) => (
+                <li
+                  key={`emoicon-${emoicon.id}`}
+                  onClick={() => setChosenIcon(emoicon)}
+                >
+                  <img src={emoicon.url_340} alt="이모티콘" />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="emoticon_container">
-          <ul>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc81de76.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc8429b1.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc86da2d.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc882d2e.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc899d2a.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc8be035.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc8d499c.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695880_640eddc8ec460.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695881_640eddc919bb6.gif"
-                alt="이모티콘"
-              />
-            </li>
-            <li>
-              <img
-                src="https://loungest.blob.core.windows.net/lounge/images/3/2023/3/13/1678695881_640eddc92d50e.gif"
-                alt="이모티콘"
-              />
-            </li>
-          </ul>
-        </div>
-      </div>
+      )}
     </>
   );
 }

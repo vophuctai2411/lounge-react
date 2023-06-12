@@ -1,7 +1,6 @@
 import "./App.scss";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./pages/router";
-
 import axios from "axios";
 import NotFoundPage from "./pages/notFound";
 

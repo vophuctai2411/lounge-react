@@ -3,7 +3,7 @@ import more_action_icon from "@/assets/icons/more_action.svg";
 import deleted_comment_icon from "@/assets/icons/deleted_comment.svg";
 import Reaction from "../reaction";
 
-function Comment({ data, isReply }: any) {
+function Comment({ data, isReply, setParentID }: any) {
   return (
     <div className={isReply ? "child_comment" : ""}>
       {data.deleted_at ? (
@@ -48,7 +48,14 @@ function Comment({ data, isReply }: any) {
                 postID={data.post_id}
                 commentID={data.id}
               />
-              {!isReply && <button className="comment_replay">답글 1</button>}
+              {!isReply && (
+                <button
+                  className="comment_replay"
+                  onClick={() => setParentID(data.id)}
+                >
+                  답글 1
+                </button>
+              )}
             </div>
           </div>
         </div>

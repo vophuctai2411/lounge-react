@@ -3,7 +3,7 @@ import Comment from "@/components/comment";
 import { useQuery } from "@tanstack/react-query";
 import { getCommentsByPostID } from "@/services/community";
 
-function CommentList({ postID }: any) {
+function CommentList({ postID, setParentID }: any) {
   const { data: comments } = useQuery({
     queryKey: ["comments_Query", postID],
     queryFn: () =>
@@ -45,12 +45,16 @@ function CommentList({ postID }: any) {
       <div className="comment_content">
         <ul>
           {comments?.map((cmt: any) => (
-            <li>
-              <Comment data={cmt} />
+            <li key={`commentKey-${cmt.id}`}>
+              <Comment data={cmt} setParentID={setParentID} />
               <ul>
                 {cmt.children.length > 0 &&
                   cmt.children.map((child: any) => (
-                    <Comment isReply={true} data={child} />
+                    <Comment
+                      isReply={true}
+                      data={child}
+                      key={`subcmtKey-${child.id}`}
+                    />
                   ))}
               </ul>
             </li>

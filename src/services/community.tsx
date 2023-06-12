@@ -35,5 +35,20 @@ export function getCommentsByPostID(postID: number) {
 }
 
 export function commentOnPost(postID: number, payload: any) {
-  return axios.post(`${API_ENDPOINT}/board/1/post/${postID}/comments`);
+  return axios.post(`${API_ENDPOINT}/board/1/post/${postID}/comments`, payload);
+}
+
+export function commentIconOnPost(postID: number, payload: any) {
+  return axios.post(
+    `${API_ENDPOINT}/board/1/post/${postID}/comments-emoticon`,
+    payload
+  );
+}
+
+export function getAllEmoticonPackages() {
+  return axios.get(`${API_ENDPOINT}/emoticonPackages`);
+}
+
+export function get_All_Emoicon_By_PackageID(packageID: any) {
+  return axios.get(`${API_ENDPOINT}/emoticonPackages/${packageID}`);
 }

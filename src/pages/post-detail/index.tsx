@@ -8,6 +8,7 @@ import Post from "@/components/post";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getPostByID } from "@/services/community";
+import { useState } from "react";
 
 function PostDetail() {
   const { id } = useParams();
@@ -15,6 +16,8 @@ function PostDetail() {
     queryKey: ["postDetail_Query", id],
     queryFn: () => getPostByID(id).then((response) => response.data?.post),
   });
+
+  const [parentID, setParentID] = useState(null);
 
   return (
     <div className="wrap">
@@ -24,15 +27,16 @@ function PostDetail() {
           <img src={profile_icon} alt="profile icon" />
         </div>
       </Header>
+
       <main style={{ backgroundColor: "rgb(249, 250, 251)" }}>
         <div className="post_wrap">{data && <Post data={data} />}</div>
 
         <div className="comment_wrap">
           <div className="comment_container">
-            <CommentList postID={data?.id} />
+            <CommentList postID={data?.id} setParentID={setParentID} />
           </div>
           <div className="comment_action">
-            <CommentWriter />
+            <CommentWriter postID={data?.id} parentID={parentID} />
           </div>
         </div>
       </main>
