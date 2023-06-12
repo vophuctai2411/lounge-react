@@ -23,6 +23,7 @@ export type PostType = {
 };
 
 export type PostListType = {
-  data?: any[];
+  data: any[];
   getData: any;
+  isLastPage?: boolean
 };

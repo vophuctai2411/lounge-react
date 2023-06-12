@@ -5,30 +5,50 @@ import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getAllPost } from "@/services/community";
 
 function Community() {
+  const [postResponse, setPostResponse] = useState<any>(null);
   const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
+  const [chosenCategory, setChosenCategory] = useState<number>();
+  const previousChosenCategory = useRef<any>();
 
   const getData = async () => {
-    console.log("hello");
+    const isChangeCategory = previousChosenCategory.current !== chosenCategory;
+
     const params = {
-      searchText: "",
-      //"postCategories[]": /* this.postCategories */ 2,
+      ...(chosenCategory && { "postCategories[]": chosenCategory }),
       perPage: 5,
-      page: /* this.page */ page,
+      page: isChangeCategory ? 1 : page,
     };
     const response = await getAllPost(params);
     if (response.data.success) {
-      setPostList((preState) => [...preState, ...response.data.posts.data]);
+      setPostList((preState) => {
+        if (isChangeCategory) {
+          previousChosenCategory.current = chosenCategory;
+          return response.data.posts.data;
+        }
+
+        const fisrtResponse = response.data.posts.data[0];
+        const existedIdArr = preState?.reduce(
+          (previousArray: any[], currentItem: any) => [
+            ...previousArray,
+            currentItem.id,
+          ],
+          []
+        );
+        if (existedIdArr.includes(fisrtResponse.id)) return preState;
+        else return [...preState, ...response.data.posts.data];
+      });
+      setPostResponse(response.data.posts);
     }
   };
 
   useEffect(() => {
     getData();
-  }, [page]);
+  }, [page, chosenCategory]);
 
   return (
     <div className="community">
@@ -43,8 +63,12 @@ function Community() {
         </div>
       </Header>
       <div className="posts">
-        <Categories />
-        <PostList data={postList} getData={() => setPage((page) => page + 1)} />
+        <Categories setChosenCategory={setChosenCategory} />
+        <PostList
+          data={postList}
+          getData={() => setPage((page) => page + 1)}
+          isLastPage={postResponse?.current_page === postResponse?.last_page}
+        />
       </div>
     </div>
   );

@@ -7,12 +7,12 @@ import Profile from "./profile";
 
 const pagesData: routerType[] = [
   {
-    path: "*",
+    path: "/board",
     element: <Community />,
     title: "home",
   },
   {
-    path: "post/:id",
+    path: "detail/:id",
     element: <PostDetail />,
     title: "post detail",
   },

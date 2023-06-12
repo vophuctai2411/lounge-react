@@ -4,9 +4,62 @@ import dislike_icon from "@/assets/icons/dislike.svg";
 import like_active_icon from "@/assets/icons/like_active.svg";
 import dislike_active_icon from "@/assets/icons/dislike_active.svg";
 import { useState } from "react";
+import { likeAPI, dislikeAPI } from "@/services/community";
 
-function Reaction() {
-  const [activeButton, setActiveButton] = useState(-1);
+function Reaction({
+  like,
+  dislike,
+  isAuthorLike,
+  isAuthorDislike,
+  postID,
+  commentID,
+}: any) {
+  const [like_count, setLike] = useState(like);
+  const [dislike_count, setDislike] = useState(dislike);
+
+  const likeAction = () => {
+    likeAPI(postID, commentID);
+    switch (activeButton) {
+      case -1:
+        setActiveButton(1);
+        setLike((like: any) => like + 1);
+        break;
+      case 1:
+        setActiveButton(-1);
+        setLike((like: any) => like - 1);
+        break;
+      case 2:
+        setActiveButton(1);
+        setLike((like: any) => like + 1);
+        setDislike((dislike: any) => dislike - 1);
+        break;
+    }
+  };
+
+  const dislikeAction = () => {
+    dislikeAPI(postID, commentID);
+    switch (activeButton) {
+      case -1:
+        setActiveButton(2);
+        setDislike((dislike: any) => dislike + 1);
+        break;
+      case 1:
+        setActiveButton(2);
+        setDislike((dislike: any) => dislike + 1);
+        setLike((like: any) => like - 1);
+        break;
+      case 2:
+        setActiveButton(-1);
+        setDislike((dislike: any) => dislike - 1);
+        break;
+    }
+  };
+
+  const [activeButton, setActiveButton] = useState(() => {
+    if (isAuthorLike) return 1;
+    if (isAuthorDislike) return 2;
+    return -1;
+  });
 
   return (
     <>
@@ -16,9 +69,7 @@ function Reaction() {
             ? "thumb_btn active_post active_pressed"
             : "thumb_btn active_post"
         }
-        onClick={() => {
-          setActiveButton(1);
-        }}
+        onClick={() => likeAction()}
       >
         <img
           src={activeButton == 1 ? like_active_icon : like_icon}
@@ -26,7 +77,7 @@ function Reaction() {
         />
 
         <span className="thumb_text">
-          {activeButton == 1 ? 100000 : "좋아요"}
+          {like_count > 0 ? like_count : "좋아요"}
         </span>
       </button>
 
@@ -36,16 +87,14 @@ function Reaction() {
             ? "thumb_btn active_post active_pressed"
             : "thumb_btn active_post"
         }
-        onClick={() => {
-          setActiveButton(2);
-        }}
+        onClick={() => dislikeAction()}
       >
         <img
           src={activeButton == 2 ? dislike_active_icon : dislike_icon}
           className="thumb_img"
         />
         <span className="thumb_text">
-          {activeButton == 2 ? 100000 : "싫어요"}
+          {dislike_count > 0 ? dislike_count : "싫어요"}
         </span>
       </button>
     </>

@@ -1,70 +1,70 @@
 import { get_all_categories } from "@/services/community";
 import "./index.scss";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import filter_icon from "@/assets/icons/filter.svg";
 import CategoryFilterModal from "../category-filter-modal";
 import { categoryType } from "@/types/components.type";
+import { useQuery } from "@tanstack/react-query";
 
-function Categories() {
+function Categories({ setChosenCategory }: any) {
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [categories, setCategories] = useState<categoryType[]>([]);
+  const [showCategories, setShowCategories] = useState<number[]>([]);
 
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      const response = await get_all_categories();
-      if (response.status == 200 && response.data.success) {
-        const postCategories: categoryType[] = response.data.postCategories;
-        setCategories(postCategories);
-        setSelectedCategories(postCategories.map((i) => i.id));
-      }
-    };
-
-    getData();
-  }, []);
+  const { data: allCategories } = useQuery({
+    queryKey: ["categories_Query"],
+    queryFn: () =>
+      get_all_categories().then((response) => response.data.postCategories),
+    onSuccess: (data) => {
+      const postCategories: categoryType[] = data;
+      setShowCategories(postCategories.map((i) => i.id));
+    },
+    staleTime: 10000,
+  });
 
   return (
-    <div className="categories_section">
-      <button
-        className="filter_adjustment"
-        onClick={() => setIsOpenModal(true)}
-      >
-        <img src={filter_icon} alt="filter icon" />
-      </button>
+    allCategories && (
+      <div className="categories_section">
+        <button
+          className="filter_adjustment"
+          onClick={() => setIsOpenModal(true)}
+        >
+          <img src={filter_icon} alt="filter icon" />
+        </button>
 
-      <ul className="filter_category_list">
-        <li key="0">
-          <input type="radio" id="0" name="postCategoryGroup" />
-          <label htmlFor="0">전체</label>
-        </li>
-        {categories.map((i) => {
-          const key_prefix = `category_list-`;
-          if (selectedCategories.includes(i.id)) {
-            const category_list_key = key_prefix + `${i.id}`;
-            return (
-              <li key={category_list_key}>
-                <input
-                  type="radio"
-                  id={category_list_key}
-                  name="postCategoryGroup"
-                />
-                <label htmlFor={category_list_key}>{i.name}</label>
-              </li>
-            );
-          }
-        })}
-      </ul>
+        <ul className="filter_category_list">
+          <li key="0" onClick={() => setChosenCategory(0)}>
+            <input type="radio" id="0" name="postCategoryGroup" />
+            <label htmlFor="0">전체</label>
+          </li>
+          {allCategories.map((i: any) => {
+            const key_prefix = `category_list-`;
+            if (showCategories.includes(i.id)) {
+              const category_list_key = key_prefix + `${i.id}`;
+              return (
+                <li key={category_list_key}>
+                  <input
+                    type="radio"
+                    id={category_list_key}
+                    name="postCategoryGroup"
+                    onClick={() => setChosenCategory(i.id)}
+                  />
+                  <label htmlFor={category_list_key}>{i.name}</label>
+                </li>
+              );
+            }
+          })}
+        </ul>
 
-      {isOpenModal && (
-        <CategoryFilterModal
-          categories={categories}
-          setIsOpenModal={setIsOpenModal}
-          selectedCategories={selectedCategories}
-          saveSelection={setSelectedCategories}
-        />
-      )}
-    </div>
+        {isOpenModal && (
+          <CategoryFilterModal
+            categories={allCategories}
+            setIsOpenModal={setIsOpenModal}
+            selectedCategories={showCategories}
+            saveSelection={setShowCategories}
+          />
+        )}
+      </div>
+    )
   );
 }
 
