@@ -1,24 +1,19 @@
 @import "/src/variables.scss";
 
-.post_detail {
-  background-color: $global_background_color;
-
-  .main_content {
-    margin-top: $header_height;
-  }
-
-  .comment_action {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-  }
+.post_wrap {
+  background-color: $color-grey-11;
 }
 
-button,
-input,
-select,
-textarea {
-  background-color: transparent;
-  border-style: none;
+.comment_container {
+  width: 100%;
+  padding: 16px 16px 80px;
+  background-color: #fff;
+  min-height: 40vh;
+}
+
+.comment_action {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }

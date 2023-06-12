@@ -17,24 +17,25 @@ function PostDetail() {
   });
 
   return (
-    <div className="post_detail">
+    <div className="wrap">
       <Header>
         <div className="header-icons">
           <img src={search_icon} alt="search icon" />
           <img src={profile_icon} alt="profile icon" />
         </div>
       </Header>
-      <div className="main_content">
-        <div className="comment_container">{data && <Post data={data} />}</div>
+      <main style={{ backgroundColor: "rgb(249, 250, 251)" }}>
+        <div className="post_wrap">{data && <Post data={data} />}</div>
 
-        <div className="comment_writer">
-          <CommentList />
+        <div className="comment_wrap">
+          <div className="comment_container">
+            <CommentList postID={data?.id} />
+          </div>
+          <div className="comment_action">
+            <CommentWriter />
+          </div>
         </div>
-      </div>
-
-      <div className="comment_action">
-        <CommentWriter />
-      </div>
+      </main>
     </div>
   );
 }

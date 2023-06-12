@@ -2,11 +2,6 @@
   display: flex;
   margin-bottom: 12px;
 
-  button {
-    background-color: transparent;
-    border-style: none;
-  }
-
   .comment_user_img img {
     width: 48px;
     height: 48px;
@@ -68,16 +63,27 @@
       }
     }
   }
+}
 
-  .deleted_comment {
-    font-size: 14px;
-    line-height: 24px;
-    color: #afb8c3;
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    .deleted_reply {
-      padding-left: 60px;
-    }
+.child_comment {
+  padding-left: 60px;
+  .comment_user_img img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.deleted_comment {
+  font-size: 14px;
+  line-height: 24px;
+  color: #afb8c3;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
   }
 }

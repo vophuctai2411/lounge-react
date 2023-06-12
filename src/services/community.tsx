@@ -29,3 +29,11 @@ export function dislikeAPI(postID: number, commentID?: number) {
 export function getPostByID(id: string | undefined) {
   return axios.get(`${API_ENDPOINT}/board/1/posts/${id}`);
 }
+
+export function getCommentsByPostID(postID: number) {
+  return axios.get(`${API_ENDPOINT}/board/1/post/${postID}/comments`);
+}
+
+export function commentOnPost(postID: number, payload: any) {
+  return axios.post(`${API_ENDPOINT}/board/1/post/${postID}/comments`);
+}
