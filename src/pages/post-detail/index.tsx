@@ -15,6 +15,7 @@ function PostDetail() {
   const { data } = useQuery({
     queryKey: ["postDetail_Query", id],
     queryFn: () => getPostByID(id).then((response) => response.data?.post),
+    staleTime: Infinity,
   });
 
   const [parentID, setParentID] = useState(null);

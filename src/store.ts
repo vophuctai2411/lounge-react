@@ -3,7 +3,7 @@ import commentReducer from "@/slices/commentsSlice";
 
 export const store = configureStore({
   reducer: {
-    comment: commentReducer,
+    comments: commentReducer,
   },
 });
 

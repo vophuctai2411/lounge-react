@@ -10,14 +10,16 @@ import {
   getCommentsByPostID,
 } from "@/services/community";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { saveComments } from "@/slices/commentsSlice";
+import { useDispatch } from "react-redux";
 
 function CommentWriter({ postID, parentID }: any) {
   const [textValue, setTextValue] = useState("");
   const [isShowIconModal, setIsShowIconModal] = useState(false);
   const [selectedPackgeID, setSelectedPackageID] = useState();
   const [chosenIcon, setChosenIcon] = useState();
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   const sendMessage = async () => {
     let response;
@@ -41,17 +43,9 @@ function CommentWriter({ postID, parentID }: any) {
       setIsShowIconModal(false);
       setChosenIcon(undefined);
 
-      useQuery({
-        queryKey: ["comments_Query", postID],
-        queryFn: () =>
-          getCommentsByPostID(postID).then(
-            (response) => response.data.comments
-          ),
-      });
-
       getCommentsByPostID(postID).then((response) => {
         const comments = response.data.comments;
-        queryClient.setQueryData(["comments_Query", postID], comments);
+        dispatch(saveComments(comments));
       });
     }
   };
@@ -95,8 +89,8 @@ function CommentWriter({ postID, parentID }: any) {
             value={textValue}
             onChange={(e) => setTextValue(e.target.value)}
             onFocus={() => {
-              setIsShowIconModal(false);
-              setChosenIcon(undefined);
+              // setIsShowIconModal(false);
+              //setChosenIcon(undefined);
             }}
           />
           {!textValue && (

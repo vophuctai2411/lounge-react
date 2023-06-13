@@ -31,3 +31,19 @@
     background: #f0f2f4;
   }
 }
+
+.see_more_reply_btn {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  color: #333d4b;
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
+  margin-bottom: 12px;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
