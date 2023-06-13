@@ -4,7 +4,7 @@ import goBackIcon from "@/assets/icons/goBack.svg";
 import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
-  title?: string;
+  title?: any;
   env?: string;
 };
 

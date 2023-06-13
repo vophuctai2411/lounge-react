@@ -65,3 +65,8 @@ export function get_pickposts(page: number) {
 export function getMyInfo() {
   return axios.get(`${API_ENDPOINT}/me`);
 }
+
+//write post
+export function writeNewPost(formData: any) {
+  return axios.post(`${API_ENDPOINT}/board/1/posts`, formData);
+}

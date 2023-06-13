@@ -5,13 +5,19 @@ import writer_warning_mark from "@/assets/icons/writer_warning_mark.svg";
 import writer_close_warning from "@/assets/icons/writer_close_warning.svg";
 import writer_close_image from "@/assets/icons/writer_close_image.svg";
 import writer_upload_image from "@/assets/icons/writer_upload_image.svg";
+import privacy_arrow_down_icon from "@/assets/icons/privacy_arrow_down.svg";
 import { useRef, useState } from "react";
 import Modal from "@/components/modal";
+import { get_all_categories, writeNewPost } from "@/services/community";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function PostWriter() {
   const multipleImageRef = useRef<HTMLInputElement>(null);
 
   const [postImages, setPostImages] = useState<any[]>([]);
+  const [postContent, setPostContent] = useState("");
+
   const openFileDialog = () => {
     // if (this.postData.postImages.length >= 10) {
     //   alert("이미지는 최대 10장까지 첨부 가능합니다.");
@@ -20,7 +26,10 @@ function PostWriter() {
     multipleImageRef.current?.click();
   };
 
-  const [];
+  const [isSecret, setIsSecret] = useState(0);
+  const [isShowPrivacyModal, setIsShowPrivacyModal] = useState(false);
+  const [chosenCategory, setChosenCategory] = useState<any>();
+  const [isShowCategoriesModal, setIsShowCategoriesModal] = useState(false);
 
   const handleFileSelect = (e: any) => {
     const fileArray = e.target.files;
@@ -53,14 +62,66 @@ function PostWriter() {
     setPostImages(newArr);
   };
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const submitPost = async () => {
+    let formData = new FormData();
+    formData.append("isSecret", isSecret.toString());
+    formData.append("postCategoryId", chosenCategory.id);
+    formData.append("subject", "default subject");
+    formData.append("content", postContent);
+    for (let i = 0; i < postImages.length; i++) {
+      formData.append("uploadedImages[]", postImages[i].file);
+    }
+
+    const res = await writeNewPost(formData);
+    console.log(res);
+    if (res.data.success) {
+      navigate("/detail/" + res.data.newPost.id + location.search);
+    }
+  };
+
   return (
     <div className="wrap post-writer-container">
-      <Header />
-      <button className="select_category">
-        <span>가족이야기</span>
+      <Header
+        title={
+          <h2 onClick={() => setIsShowPrivacyModal(true)}>
+            <div>
+              <div>{isSecret ? "나만보기" : "전체보기"}</div>
+            </div>
+            <img src={privacy_arrow_down_icon} alt="arrow" />
+          </h2>
+        }
+      >
+        <button
+          className="header_activity_right_btn"
+          onClick={() => submitPost()}
+        >
+          등록
+        </button>
+      </Header>
+      {isShowPrivacyModal && (
+        <PrivacyModal
+          onClose={() => setIsShowPrivacyModal(false)}
+          setIsSecret={setIsSecret}
+        />
+      )}
+
+      <button
+        className="select_category"
+        onClick={() => setIsShowCategoriesModal(true)}
+      >
+        <span>{chosenCategory?.name || "게시글의 주제를 선택해 주세요."}</span>
         <img src={writer_select_category} alt="icon select category" />
       </button>
-      <PrivacyModal />
+      {isShowCategoriesModal && (
+        <CategoriesModal
+          setChosenCategory={setChosenCategory}
+          onClose={() => setIsShowCategoriesModal(false)}
+        />
+      )}
+
       <main>
         <section className="write_post_wrap">
           <div>
@@ -81,7 +142,10 @@ function PostWriter() {
                 <div className="write_post_content" style={{ height: "50vh" }}>
                   <textarea
                     placeholder="눈팅러의 이야기를 들려주세요."
-                    defaultValue={""}
+                    value={postContent}
+                    onChange={(e) => {
+                      setPostContent(e.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -138,27 +202,77 @@ function Warning() {
   );
 }
 
-function PrivacyModal() {
+function PrivacyModal({ onClose, setIsSecret }: any) {
   return (
     <Modal
       modalBox={
         <div className="modal_box set_privacy_modal_box">
           <ul>
-            <li>
+            <li
+              onClick={() => {
+                setIsSecret(1);
+                onClose();
+              }}
+            >
               <div style={{ verticalAlign: "inherit" }}>
                 <div style={{ verticalAlign: "inherit" }}>나만보기</div>
               </div>
             </li>
-            <li>
+            <li
+              onClick={() => {
+                setIsSecret(0);
+                onClose();
+              }}
+            >
               <div style={{ verticalAlign: "inherit" }}>
                 <div style={{ verticalAlign: "inherit" }}>전체보기</div>
               </div>
             </li>
-            <li>
+            <li onClick={() => onClose()}>
               <div style={{ verticalAlign: "inherit" }}>
                 <div style={{ verticalAlign: "inherit" }}>취소</div>
               </div>
             </li>
+          </ul>
+        </div>
+      }
+    />
+  );
+}
+
+function CategoriesModal({ setChosenCategory, onClose }: any) {
+  const { data: allCategories } = useQuery({
+    queryKey: ["categories_Query"],
+    queryFn: () =>
+      get_all_categories().then((response) => response.data.postCategories),
+    staleTime: Infinity,
+  });
+
+  return (
+    <Modal
+      header={
+        <div>
+          <h3>주제 선택</h3>
+          <p>게시글의 주제를 선택해 주세요.</p>
+        </div>
+      }
+      content={
+        <div className="modal_box_content select_category_modal_box_content">
+          <ul className="select_category_list">
+            {allCategories?.map((category: any) => (
+              <li
+                key={`categoryKey-${category.id}`}
+                onClick={() => {
+                  setChosenCategory(category);
+                  onClose();
+                }}
+              >
+                <button>
+                  <span />
+                  {category.name}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       }

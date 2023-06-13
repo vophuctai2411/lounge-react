@@ -159,3 +159,25 @@
     }
   }
 }
+
+.select_category_modal_box_content {
+  margin-bottom: 0;
+}
+
+.select_category_list li button {
+  width: 100%;
+  padding: 11px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.header_activity_right_btn {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: $color-primary-01;
+}
