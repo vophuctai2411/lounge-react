@@ -23,10 +23,14 @@ function PostDetail() {
   return (
     <div className="wrap">
       <Header>
-        <div className="header-icons">
-          <img src={search_icon} alt="search icon" />
-          <img src={profile_icon} alt="profile icon" />
-        </div>
+        <>
+          <button>
+            <img src={search_icon} alt="search icon" />
+          </button>
+          <button>
+            <img src={profile_icon} alt="profile icon" />
+          </button>
+        </>
       </Header>
 
       <main style={{ backgroundColor: "rgb(249, 250, 251)" }}>

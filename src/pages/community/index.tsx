@@ -4,11 +4,14 @@ import profile_icon from "@/assets/icons/profile.svg";
 import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { getAllPost } from "@/services/community";
+import scroll_top_icon from "@/assets/icons/scroll_top.svg";
+import pencil_icon from "@/assets/icons/pencil.svg";
 
 function Community() {
+  const location = useLocation();
   const [postResponse, setPostResponse] = useState<any>(null);
   const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -51,16 +54,21 @@ function Community() {
   }, [page, chosenCategory]);
 
   return (
-    <div className="community">
+    <div className="wrap">
       <Header>
-        <div className="header-icons">
-          <Link to="/search">
-            <img src={search_icon} alt="search icon" />
-          </Link>
-          <Link to="/profile">
-            <img src={profile_icon} alt="profile icon" />
-          </Link>
-        </div>
+        <>
+          <button>
+            <Link to={`/search${location.search}`}>
+              <img src={search_icon} alt="search icon" />
+            </Link>
+          </button>
+
+          <button>
+            <Link to={`/profile${location.search}`}>
+              <img src={profile_icon} alt="profile icon" />
+            </Link>
+          </button>
+        </>
       </Header>
       <div className="posts">
         <Categories setChosenCategory={setChosenCategory} />
@@ -69,6 +77,20 @@ function Community() {
           getData={() => setPage((page) => page + 1)}
           isLastPage={postResponse?.current_page === postResponse?.last_page}
         />
+      </div>
+
+      <div
+        className="floating_btn_wrap"
+        style={{ bottom: "20px", transition: "bottom 0.5s ease 0s" }}
+      >
+        <button className="floating_scroll_top_btn" style={{}}>
+          <img src={scroll_top_icon} alt="스크롤 위로" />
+        </button>
+        <button className="floating_write_btn">
+          <Link to={`/postwriter${location.search}`}>
+            <img src={pencil_icon} alt="글쓰기" />
+          </Link>
+        </button>
       </div>
     </div>
   );

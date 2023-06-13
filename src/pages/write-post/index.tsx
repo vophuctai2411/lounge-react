@@ -5,8 +5,54 @@ import writer_warning_mark from "@/assets/icons/writer_warning_mark.svg";
 import writer_close_warning from "@/assets/icons/writer_close_warning.svg";
 import writer_close_image from "@/assets/icons/writer_close_image.svg";
 import writer_upload_image from "@/assets/icons/writer_upload_image.svg";
+import { useRef, useState } from "react";
+import Modal from "@/components/modal";
 
 function PostWriter() {
+  const multipleImageRef = useRef<HTMLInputElement>(null);
+
+  const [postImages, setPostImages] = useState<any[]>([]);
+  const openFileDialog = () => {
+    // if (this.postData.postImages.length >= 10) {
+    //   alert("이미지는 최대 10장까지 첨부 가능합니다.");
+    //   return;
+    // }
+    multipleImageRef.current?.click();
+  };
+
+  const [];
+
+  const handleFileSelect = (e: any) => {
+    const fileArray = e.target.files;
+
+    // let input = this.$refs.fileInput;
+    // if (this.postData.postImages.length + input?.files?.length > 10) {
+    //   alert("이미지는 최대 10장까지 첨부 가능합니다.");
+    //   return;
+    // }
+
+    let chosenImages = [];
+    for (let i = 0; i < fileArray.length; i++) {
+      let file = fileArray[i];
+      chosenImages.push({
+        file: file,
+        url: URL.createObjectURL(file),
+        size: (file.size / (1024 * 1024)).toFixed(2),
+      });
+    }
+    setPostImages(chosenImages);
+  };
+
+  const removeAFile = (index: number) => {
+    // if (!this.postData.postImages[index].file) {
+    //   this.postData.removedImageIds.push(this.postData.postImages[index].id);
+    // }
+    // this.postData.postImages.splice(index, 1);
+    const newArr = postImages.filter((i, ind) => ind !== index);
+
+    setPostImages(newArr);
+  };
+
   return (
     <div className="wrap post-writer-container">
       <Header />
@@ -14,131 +60,109 @@ function PostWriter() {
         <span>가족이야기</span>
         <img src={writer_select_category} alt="icon select category" />
       </button>
-
+      <PrivacyModal />
       <main>
         <section className="write_post_wrap">
-          <div data-v-2357f178>
-            <div data-v-2357f178 className="write_post_container">
-              <div data-v-2357f178 className="board_row">
-                <div data-v-2357f178 className="write_post_warning">
-                  <p data-v-2357f178 className="write_post_warning_title">
-                    <img
-                      data-v-2357f178
-                      src={writer_warning_mark}
-                      alt="writer warning mark"
-                    />{" "}
-                    글 작성 주의사항{" "}
-                    <button data-v-2357f178>
-                      <img
-                        data-v-2357f178
-                        src={writer_close_warning}
-                        alt="writer close warning"
-                      />
+          <div>
+            <div className="write_post_container">
+              <Warning />
+              <div className="write_post_img">
+                {postImages.map((img, index) => (
+                  <div key={`images-list-${index}`}>
+                    <img src={img.url} />
+                    <button onClick={() => removeAFile(index)}>
+                      <img src={writer_close_image} alt="writer close image" />
                     </button>
-                  </p>
-                  <p data-v-2357f178 className="write_post_warning_content">
-                    {" "}
-                    눈팅 앱에서 규정한 운영규칙 위반 내용의 게시물 작성 시
-                    커뮤니티 이용에 제한이 생길 수 있습니다.{" "}
-                  </p>
-                </div>
+                    <span>{img.size}MB</span>
+                  </div>
+                ))}
               </div>
-              <div data-v-2357f178 className="write_post_img">
-                <div data-v-2357f178>
-                  <img
-                    data-v-2357f178
-                    src="blob:https://dev.front.lounge.tdi9.com/761d25b5-a218-4433-8363-0e8a41fb3908"
-                  />
-                  <button data-v-2357f178>
-                    <img
-                      data-v-2357f178
-                      src={writer_close_image}
-                      alt="writer close image"
-                    />
-                  </button>
-                  <span data-v-2357f178>0.00MB</span>
-                </div>
-                <div data-v-2357f178>
-                  <img
-                    data-v-2357f178
-                    src="blob:https://dev.front.lounge.tdi9.com/f76ceb63-d84a-4d29-b668-b4f2f7e6efa2"
-                  />
-                  <button data-v-2357f178>
-                    <img
-                      data-v-2357f178
-                      src="/img/24_img_close.bc7af4aa.svg"
-                      alt="닫기"
-                    />
-                  </button>
-                  <span data-v-2357f178>0.00MB</span>
-                </div>
-                <div data-v-2357f178>
-                  <img
-                    data-v-2357f178
-                    src="blob:https://dev.front.lounge.tdi9.com/7a98a15b-27f5-4ecc-9725-c00e2f9ccd26"
-                  />
-                  <button data-v-2357f178>
-                    <img
-                      data-v-2357f178
-                      src="/img/24_img_close.bc7af4aa.svg"
-                      alt="닫기"
-                    />
-                  </button>
-                  <span data-v-2357f178>0.00MB</span>
-                </div>
-                <div data-v-2357f178>
-                  <img
-                    data-v-2357f178
-                    src="blob:https://dev.front.lounge.tdi9.com/f367ead5-d160-4143-8461-4396a4d1a712"
-                  />
-                  <button data-v-2357f178>
-                    <img
-                      data-v-2357f178
-                      src="/img/24_img_close.bc7af4aa.svg"
-                      alt="닫기"
-                    />
-                  </button>
-                  <span data-v-2357f178>0.00MB</span>
-                </div>
-              </div>
-              <div data-v-2357f178 className="board_row">
-                <div
-                  data-v-2357f178
-                  className="write_post_content"
-                  style={{ height: "50vh" }}
-                >
+              <div className="board_row">
+                <div className="write_post_content" style={{ height: "50vh" }}>
                   <textarea
-                    data-v-2357f178
                     placeholder="눈팅러의 이야기를 들려주세요."
                     defaultValue={""}
                   />
                 </div>
               </div>
             </div>
-            <div data-v-2357f178>
+            <div>
               <input
-                data-v-2357f178
                 type="file"
-                accept="image/png, image/gif, image/jpeg"
-                multiple={true}
+                ref={multipleImageRef}
                 style={{ display: "none" }}
+                accept="image/png, image/gif, image/jpeg"
+                onChange={(e) => handleFileSelect(e)}
+                multiple
               />
             </div>
-            <button data-v-2357f178 className="write_post_footer">
-              <img
-                data-v-2357f178
-                src={writer_upload_image}
-                alt="upload image"
-              />
-              <p data-v-2357f178>
-                {" "}
-                4/10 <span data-v-2357f178> (0.00MB / 100MB) </span>
+            <button
+              className="write_post_footer"
+              onClick={() => openFileDialog()}
+            >
+              <img src={writer_upload_image} alt="upload image" />
+              <p>
+                {postImages.length}/10
+                <span> (0.00MB (CHUA TINH) / 100MB) </span>
               </p>
             </button>
           </div>
         </section>
       </main>
     </div>
+  );
+}
+
+function Warning() {
+  const [isShow, setIsShow] = useState(true);
+  return (
+    <>
+      {isShow && (
+        <div className="board_row">
+          <div className="write_post_warning">
+            <p className="write_post_warning_title">
+              <img src={writer_warning_mark} alt="writer warning mark" />글 작성
+              주의사항
+              <button onClick={() => setIsShow(false)}>
+                <img src={writer_close_warning} alt="writer close warning" />
+              </button>
+            </p>
+            <p className="write_post_warning_content">
+              눈팅 앱에서 규정한 운영규칙 위반 내용의 게시물 작성 시 커뮤니티
+              이용에 제한이 생길 수 있습니다.
+            </p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function PrivacyModal() {
+  return (
+    <Modal
+      modalBox={
+        <div className="modal_box set_privacy_modal_box">
+          <ul>
+            <li>
+              <div style={{ verticalAlign: "inherit" }}>
+                <div style={{ verticalAlign: "inherit" }}>나만보기</div>
+              </div>
+            </li>
+            <li>
+              <div style={{ verticalAlign: "inherit" }}>
+                <div style={{ verticalAlign: "inherit" }}>전체보기</div>
+              </div>
+            </li>
+            <li>
+              <div style={{ verticalAlign: "inherit" }}>
+                <div style={{ verticalAlign: "inherit" }}>취소</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      }
+    />
   );
 }
 

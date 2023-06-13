@@ -18,7 +18,7 @@ function Categories({ setChosenCategory }: any) {
       const postCategories: categoryType[] = data;
       setShowCategories(postCategories.map((i) => i.id));
     },
-    staleTime: 10000,
+    staleTime: Infinity,
   });
 
   return (

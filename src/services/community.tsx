@@ -52,3 +52,16 @@ export function getAllEmoticonPackages() {
 export function get_All_Emoicon_By_PackageID(packageID: any) {
   return axios.get(`${API_ENDPOINT}/emoticonPackages/${packageID}`);
 }
+
+//profile page
+export function get_myposts(page: number) {
+  return axios.get(`${API_ENDPOINT}/board/1/my-posts?page=${page}`);
+}
+
+export function get_pickposts(page: number) {
+  return axios.get(`${API_ENDPOINT}/board/1/pick-posts?page=${page}`);
+}
+
+export function getMyInfo() {
+  return axios.get(`${API_ENDPOINT}/me`);
+}

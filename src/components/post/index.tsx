@@ -77,7 +77,7 @@ function Post({ data }: PostType) {
             position: "relative",
           }}
         >
-          <p>{data.content}</p>
+          <p dangerouslySetInnerHTML={{ __html: data.content }} />
         </div>
       </div>
 
