@@ -3,8 +3,27 @@ import more_action_icon from "@/assets/icons/more_action.svg";
 import deleted_comment_icon from "@/assets/icons/deleted_comment.svg";
 import Reaction from "../reaction";
 import default_avatar from "@/assets/images/deafault_avatar.svg";
+import Modal from "../modal";
+import { useQuery } from "@tanstack/react-query";
+import { getMyInfo } from "@/services/community";
+import { useState } from "react";
 
 function Comment({ data, isReply, setParentID }: any) {
+  //my comment - text - sua xoa
+  // my comment - icon - xoa
+  //other person comment - report
+
+  //my post - edit, delete
+  //other post - report, block
+
+  const { data: myInfo } = useQuery({
+    queryKey: ["myInfo"],
+    queryFn: () => getMyInfo().then((res) => res.data.user),
+  });
+
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
+
   return (
     <div className={isReply ? "child_comment" : ""}>
       {data.deleted_at ? (
@@ -35,9 +54,29 @@ function Comment({ data, isReply, setParentID }: any) {
                 </span>
                 <span className="comment_time">4일 전</span>
               </p>
-              <button>
+              <button onClick={() => setIsShowModal(true)}>
                 <img src={more_action_icon} alt="more action icon" />
               </button>
+              {isShowModal && (
+                <>
+                  {myInfo.id == data.user.id ? (
+                    <MyPostModal
+                      isIcon={data.content.includes("<img")}
+                      onClose={() => setIsShowModal(false)}
+                      openConfirm={() => setIsShowConfirmModal(true)}
+                    />
+                  ) : (
+                    <OtherPostModal onClose={() => setIsShowModal(false)} />
+                  )}
+                </>
+              )}
+
+              {isShowConfirmModal && (
+                <ConfirmModal
+                  cmtID={data.id}
+                  onClose={setIsShowConfirmModal(false)}
+                />
+              )}
             </div>
             <div
               className="comment_text"
@@ -65,6 +104,74 @@ function Comment({ data, isReply, setParentID }: any) {
         </div>
       )}
     </div>
+  );
+}
+
+function MyPostModal({ isIcon, onClose, openConfirm }: any) {
+  return (
+    <Modal
+      modalBox={
+        <div className="modal_box more_modal_box">
+          <ul>
+            {!isIcon && <li>수정</li>}
+            <li
+              onClick={() => {
+                openConfirm();
+                onClose();
+              }}
+            >
+              삭제
+            </li>
+            <li onClick={() => onClose()}>취소</li>
+          </ul>
+        </div>
+      }
+    />
+  );
+}
+
+function ConfirmModal({ cmtID, onClose, blacklistItemID, refetchList }: any) {
+  async function remove() {
+    // await removeOfBlockedList(blacklistItemID);
+    // refetchList();
+    onClose();
+  }
+
+  console.log("flkjdklfjsdklfjdslk");
+
+  return (
+    <Modal
+      content={
+        <div className="modal_des_box">
+          <p>차단된 사용자를 해제하시겠습니까?</p>
+        </div>
+      }
+      footer={
+        <>
+          <button className="acceptButton" onClick={() => remove()}>
+            확인
+          </button>
+          <button className="cancelButton" onClick={() => onClose()}>
+            취소
+          </button>
+        </>
+      }
+    />
+  );
+}
+
+function OtherPostModal({ onClose }: any) {
+  return (
+    <Modal
+      modalBox={
+        <div className="modal_box more_modal_box">
+          <ul>
+            <li>신고</li>
+            <li onClick={() => onClose()}>취소</li>
+          </ul>
+        </div>
+      }
+    />
   );
 }
 
