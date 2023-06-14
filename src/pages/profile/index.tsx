@@ -4,11 +4,16 @@ import PostList from "@/components/post-list";
 import { useEffect, useState } from "react";
 import { getMyInfo, get_myposts, get_pickposts } from "@/services/community";
 import { useQuery } from "@tanstack/react-query";
+import Modal from "@/components/modal";
+import more_action_icon from "@/assets/icons/more_action.svg";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Profile() {
   const [mineOrPick, setMineOrPick] = useState(0);
   const [postResponse, setPostResponse] = useState<any>(null);
   const [page, setPage] = useState(1);
+
+  const [isShowMoreModal, setIsShowMoreModal] = useState(false);
 
   useEffect(() => {
     async function getData() {
@@ -40,7 +45,15 @@ function Profile() {
 
   return (
     <div className="profile_page wrap">
-      <Header />
+      <Header>
+        <button onClick={() => setIsShowMoreModal(true)}>
+          <img src={more_action_icon} alt="profile icon" />
+        </button>
+      </Header>
+
+      {isShowMoreModal && (
+        <MoreModal onClose={() => setIsShowMoreModal(false)} />
+      )}
       <main style={{ background: "rgb(249, 250, 251)" }}>
         <section className="profile_wrap">
           <div className="profile_container">
@@ -88,6 +101,26 @@ function Profile() {
         />
       </main>
     </div>
+  );
+}
+
+function MoreModal({ onClose }: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <Modal
+      modalBox={
+        <div className="modal_box more_modal_box">
+          <ul>
+            <li onClick={() => navigate("/blocked-user" + location.search)}>
+              차단된 사용자
+            </li>
+            <li onClick={() => onClose()}>취소</li>
+          </ul>
+        </div>
+      }
+    />
   );
 }
 

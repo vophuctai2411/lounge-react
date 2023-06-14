@@ -4,6 +4,7 @@ import PostDetail from "./post-detail";
 import Searching from "./searching";
 import PostWriter from "./write-post";
 import Profile from "./profile";
+import Blocked from "./blocked";
 
 const pagesData: routerType[] = [
   {
@@ -30,6 +31,11 @@ const pagesData: routerType[] = [
     path: "profile",
     element: <Profile />,
     title: "profile",
+  },
+  {
+    path: "blocked-user",
+    element: <Blocked />,
+    title: "block-user",
   },
 ];
 

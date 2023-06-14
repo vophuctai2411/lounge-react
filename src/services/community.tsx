@@ -26,6 +26,8 @@ export function dislikeAPI(postID: number, commentID?: number) {
   else axios.post(`${API_ENDPOINT}/board/1/posts/${postID}/dislike`);
 }
 
+//post detail
+
 export function getPostByID(id: string | undefined) {
   return axios.get(`${API_ENDPOINT}/board/1/posts/${id}`);
 }
@@ -53,6 +55,17 @@ export function get_All_Emoicon_By_PackageID(packageID: any) {
   return axios.get(`${API_ENDPOINT}/emoticonPackages/${packageID}`);
 }
 
+export function pickOrUnpickPost(postID: number) {
+  return axios.post(`${API_ENDPOINT}/board/1/posts/${postID}/pick`);
+}
+
+export function blockUser(blockedUserID: number) {
+  const body = {
+    blockedUserId: blockedUserID,
+  };
+  return axios.post(`${API_ENDPOINT}/blacklists`, body);
+}
+
 //profile page
 export function get_myposts(page: number) {
   return axios.get(`${API_ENDPOINT}/board/1/my-posts?page=${page}`);
@@ -69,4 +82,13 @@ export function getMyInfo() {
 //write post
 export function writeNewPost(formData: any) {
   return axios.post(`${API_ENDPOINT}/board/1/posts`, formData);
+}
+
+//black list
+export function getBlackList() {
+  return axios.get(`${API_ENDPOINT}/blacklists`);
+}
+
+export function removeOfBlockedList(blacklisID: number) {
+  return axios.delete(`${API_ENDPOINT}/blacklists/${blacklisID}`);
 }

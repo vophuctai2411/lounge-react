@@ -130,7 +130,7 @@ function CommentWriter({ postID, parentID }: any) {
                   key={`emoicon-${emoicon.id}`}
                   onClick={() => setChosenIcon(emoicon)}
                 >
-                  <img src={emoicon.url_340} alt="이모티콘" />
+                  <img src={emoicon?.url_340} alt="이모티콘" />
                 </li>
               ))}
             </ul>

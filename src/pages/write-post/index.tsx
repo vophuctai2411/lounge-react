@@ -76,7 +76,6 @@ function PostWriter() {
     }
 
     const res = await writeNewPost(formData);
-    console.log(res);
     if (res.data.success) {
       navigate("/detail/" + res.data.newPost.id + location.search);
     }

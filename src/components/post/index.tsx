@@ -77,7 +77,20 @@ function Post({ data }: PostType) {
             position: "relative",
           }}
         >
-          <p dangerouslySetInnerHTML={{ __html: data.content }} />
+          <span
+            dangerouslySetInnerHTML={{
+              __html:
+                data.content.length > 90
+                  ? data.content.substring(0, 90)
+                  : data.content,
+            }}
+          />
+
+          {data.content.length > 90 && (
+            <span className="content_more_btn">
+              ... <b>더 보기</b>
+            </span>
+          )}
         </div>
       </div>
 

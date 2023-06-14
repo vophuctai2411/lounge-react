@@ -49,6 +49,11 @@
       max-height: 72px;
       overflow: hidden;
       position: relative;
+
+      .content_more_btn b {
+        color: #afb8c3;
+        font-weight: bold;
+      }
     }
 
     .post_info {

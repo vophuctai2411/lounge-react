@@ -4,6 +4,8 @@ import "./index.scss";
 import search_icon from "@/assets/icons/search.svg";
 import { useEffect, useState } from "react";
 import { getAllPost } from "@/services/community";
+import NoData from "@/components/no-data";
+import ReactDOMServer from "react-dom/server";
 
 function Searching() {
   const [search, setSearch] = useState("");
@@ -18,13 +20,33 @@ function Searching() {
     };
     const res = await getAllPost(params);
     if (res.data.success) {
-      setPostResponse(res.data.posts);
+      const hightLightData = res.data?.posts?.data?.map((dt: any) => {
+        return {
+          ...dt,
+          content: getHighlightedText(dt.content, search),
+        };
+      });
+
+      const newArrPost = {
+        ...res.data.posts,
+        data: hightLightData,
+      };
+
+      setPostResponse(newArrPost);
     }
   }
 
   useEffect(() => {
-    searchAction();
+    if (page !== 1) searchAction();
   }, [page]);
+
+  function getHighlightedText(text: string, highlight: string) {
+    const htmlString = text.replace(
+      highlight,
+      `<span style="background: #ffeaf7; color: #ff2eab">${highlight}</span>`
+    );
+    return htmlString;
+  }
 
   return (
     <div className="searching-page">
@@ -45,11 +67,21 @@ function Searching() {
             </button>
           </div>
         </section>
-        <PostList
-          data={postResponse?.data}
-          getData={() => setPage((page) => page + 1)}
-          isLastPage={postResponse?.current_page === postResponse?.last_page}
-        />
+        {postResponse?.data?.length == 0 ? (
+          <NoData text="검색된 글 없습니다." />
+        ) : (
+          <>
+            {postResponse && (
+              <PostList
+                data={postResponse?.data}
+                getData={() => setPage((page) => page + 1)}
+                isLastPage={
+                  postResponse?.current_page === postResponse?.last_page
+                }
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

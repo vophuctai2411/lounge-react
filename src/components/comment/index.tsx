@@ -2,6 +2,7 @@ import "./index.scss";
 import more_action_icon from "@/assets/icons/more_action.svg";
 import deleted_comment_icon from "@/assets/icons/deleted_comment.svg";
 import Reaction from "../reaction";
+import default_avatar from "@/assets/images/deafault_avatar.svg";
 
 function Comment({ data, isReply, setParentID }: any) {
   return (
@@ -14,7 +15,10 @@ function Comment({ data, isReply, setParentID }: any) {
       ) : (
         <div className="new_comment">
           <div className="comment_user_img">
-            <img src={data.user.profile_image.url_340} alt="프로필 이미지" />
+            <img
+              src={data?.user?.profile_image?.url_340 || default_avatar}
+              alt="프로필 이미지"
+            />
           </div>
           <div className="comment_right">
             <div className="comment_info">
