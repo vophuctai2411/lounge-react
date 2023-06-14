@@ -84,6 +84,10 @@ export function writeNewPost(formData: any) {
   return axios.post(`${API_ENDPOINT}/board/1/posts`, formData);
 }
 
+export function EditPost(formData: any, id: any) {
+  return axios.post(`${API_ENDPOINT}/board/1/posts/${id}`, formData);
+}
+
 //black list
 export function getBlackList() {
   return axios.get(`${API_ENDPOINT}/blacklists`);

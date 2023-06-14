@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import header_bookmark_off_icon from "@/assets/icons/header_activity_bookmark_off.svg";
 import header_bookmark_on_icon from "@/assets/icons/header_activity_bookmark_on.svg";
 import more_action_icon from "@/assets/icons/more_action.svg";
+import bookmark_success_modal_icon from "@/assets/icons/bookmark_success.svg";
 import Modal from "@/components/modal";
 
 function PostDetail() {
@@ -27,6 +28,8 @@ function PostDetail() {
 
   const [parentID, setParentID] = useState(null);
   const [isShowMoreModal, setIsShowMoreModal] = useState(false);
+  const [isShowBookmarkSuccessModal, setIsShowBookmarkSuccessModal] =
+    useState(false);
 
   const { data: myInfo } = useQuery({
     queryKey: ["myInfo"],
@@ -42,7 +45,10 @@ function PostDetail() {
   async function changePickStt() {
     const res = await pickOrUnpickPost(data.id);
 
-    if (res.data.success) setIsPostPick((preStt: any) => !preStt);
+    if (res.data.success) {
+      if (!isPostPick) setIsShowBookmarkSuccessModal(true);
+      setIsPostPick((preStt: any) => !preStt);
+    }
   }
 
   return (
@@ -62,11 +68,19 @@ function PostDetail() {
           </button>
         </>
       </Header>
+      {isShowBookmarkSuccessModal && (
+        <PickSuccessModal
+          onClose={() => setIsShowBookmarkSuccessModal(false)}
+        />
+      )}
 
       {isShowMoreModal && (
         <>
           {data.user_id == myInfo.id ? (
-            <MyPostMoreModal onClose={() => setIsShowMoreModal(false)} />
+            <MyPostMoreModal
+              onClose={() => setIsShowMoreModal(false)}
+              postID={data?.id}
+            />
           ) : (
             <OtherPersonPostMoreModal
               onClose={() => setIsShowMoreModal(false)}
@@ -92,13 +106,20 @@ function PostDetail() {
   );
 }
 
-function MyPostMoreModal({ onClose }: any) {
+function MyPostMoreModal({ onClose, postID }: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Modal
       modalBox={
         <div className="modal_box more_modal_box">
           <ul>
-            <li>수정</li>
+            <li
+              onClick={() => navigate("/edit-post/" + postID + location.search)}
+            >
+              수정
+            </li>
             <li>삭제</li>
             <li onClick={() => onClose()}>취소</li>
           </ul>
@@ -129,6 +150,26 @@ function OtherPersonPostMoreModal({ onClose, postUserID }: any) {
             <li onClick={() => onClose()}>취소</li>
           </ul>
         </div>
+      }
+    />
+  );
+}
+
+function PickSuccessModal({ onClose }: any) {
+  return (
+    <Modal
+      content={
+        <div className="modal_des_box">
+          <img src={bookmark_success_modal_icon} alt="no image" />
+          <p>차단된 사용자를 해제하시겠습니까?</p>
+        </div>
+      }
+      footer={
+        <>
+          <button className="acceptButton" onClick={() => onClose()}>
+            확인
+          </button>
+        </>
       }
     />
   );

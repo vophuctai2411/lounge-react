@@ -8,15 +8,65 @@ import writer_upload_image from "@/assets/icons/writer_upload_image.svg";
 import privacy_arrow_down_icon from "@/assets/icons/privacy_arrow_down.svg";
 import { useRef, useState } from "react";
 import Modal from "@/components/modal";
-import { get_all_categories, writeNewPost } from "@/services/community";
-import { useQuery } from "@tanstack/react-query";
+import {
+  EditPost,
+  getMyInfo,
+  getPostByID,
+  get_all_categories,
+  writeNewPost,
+} from "@/services/community";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function PostWriter() {
   const multipleImageRef = useRef<HTMLInputElement>(null);
 
   const [postImages, setPostImages] = useState<any[]>([]);
   const [postContent, setPostContent] = useState("");
+  const [isSecret, setIsSecret] = useState(0);
+  const [chosenCategory, setChosenCategory] = useState<any>();
+  const [isShowPrivacyModal, setIsShowPrivacyModal] = useState(false);
+  const [isShowCategoriesModal, setIsShowCategoriesModal] = useState(false);
+
+  let { id: postID } = useParams();
+  const isEdit = !!postID;
+  if (isEdit) {
+    const results = useQueries({
+      queries: [
+        {
+          queryKey: ["categories_Query"],
+          queryFn: () =>
+            get_all_categories().then(
+              (response) => response.data.postCategories
+            ),
+          staleTime: Infinity,
+        },
+        {
+          queryKey: ["postDetail_Query"],
+          queryFn: () =>
+            getPostByID(postID).then((response: any) => response.data?.post),
+          onSuccess: (data: any) => {
+            setPostImages(data.images);
+            setPostContent(data.content);
+            setIsSecret(data.is_secret);
+          },
+          staleTime: Infinity,
+        },
+      ],
+    });
+
+    if (results[0].isSuccess && results[1].isSuccess && !chosenCategory) {
+      const listCate = results[0].data;
+      const postData = results[1].data;
+
+      const chosenCate = listCate?.filter(
+        (cate: any) => cate.id == postData?.post_category_id
+      )[0];
+
+      setChosenCategory(chosenCate);
+    }
+  }
 
   const openFileDialog = () => {
     // if (this.postData.postImages.length >= 10) {
@@ -25,11 +75,6 @@ function PostWriter() {
     // }
     multipleImageRef.current?.click();
   };
-
-  const [isSecret, setIsSecret] = useState(0);
-  const [isShowPrivacyModal, setIsShowPrivacyModal] = useState(false);
-  const [chosenCategory, setChosenCategory] = useState<any>();
-  const [isShowCategoriesModal, setIsShowCategoriesModal] = useState(false);
 
   const handleFileSelect = (e: any) => {
     const fileArray = e.target.files;
@@ -40,7 +85,7 @@ function PostWriter() {
     //   return;
     // }
 
-    let chosenImages = [];
+    let chosenImages: any[] = [];
     for (let i = 0; i < fileArray.length; i++) {
       let file = fileArray[i];
       chosenImages.push({
@@ -49,7 +94,7 @@ function PostWriter() {
         size: (file.size / (1024 * 1024)).toFixed(2),
       });
     }
-    setPostImages(chosenImages);
+    setPostImages((preState) => [...preState, ...chosenImages]);
   };
 
   const removeAFile = (index: number) => {
@@ -75,9 +120,12 @@ function PostWriter() {
       formData.append("uploadedImages[]", postImages[i].file);
     }
 
-    const res = await writeNewPost(formData);
+    const res = isEdit
+      ? await EditPost(formData, postID)
+      : await writeNewPost(formData);
     if (res.data.success) {
-      navigate("/detail/" + res.data.newPost.id + location.search);
+      const id = postID || res.data.newPost.id;
+      navigate("/detail/" + id + location.search);
     }
   };
 

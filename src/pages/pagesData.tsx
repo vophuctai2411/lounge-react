@@ -28,6 +28,11 @@ const pagesData: routerType[] = [
     title: "postwriter",
   },
   {
+    path: "edit-post/:id",
+    element: <PostWriter />,
+    title: "edit-post",
+  },
+  {
     path: "profile",
     element: <Profile />,
     title: "profile",
