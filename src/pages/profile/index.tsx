@@ -9,6 +9,8 @@ import more_action_icon from "@/assets/icons/more_action.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [mineOrPick, setMineOrPick] = useState(0);
   const [postResponse, setPostResponse] = useState<any>(null);
   const [page, setPage] = useState(1);
@@ -60,7 +62,10 @@ function Profile() {
             <div className="profile_img">
               <img src={myInfo?.profile_image?.url_180} alt="프로필 이미지" />
             </div>
-            <div className="profile_info">
+            <div
+              className="profile_info"
+              onClick={() => navigate("/edit-profile" + location.search)}
+            >
               <p>{myInfo?.name}</p>
               <button>내 정보 수정</button>
             </div>

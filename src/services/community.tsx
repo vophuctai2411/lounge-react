@@ -66,6 +66,12 @@ export function blockUser(blockedUserID: number) {
   return axios.post(`${API_ENDPOINT}/blacklists`, body);
 }
 
+export function deleteComment(postID: number, commentID: number) {
+  return axios.delete(
+    `${API_ENDPOINT}/board/1/post/${postID}/comments/${commentID}`
+  );
+}
+
 //profile page
 export function get_myposts(page: number) {
   return axios.get(`${API_ENDPOINT}/board/1/my-posts?page=${page}`);
@@ -77,6 +83,19 @@ export function get_pickposts(page: number) {
 
 export function getMyInfo() {
   return axios.get(`${API_ENDPOINT}/me`);
+}
+
+export function patchName(name: any) {
+  const body = { name: name };
+  return axios.patch(`${API_ENDPOINT}/profile`, body);
+}
+
+export function uploadAvatar(fromData: any) {
+  return axios.post(`${API_ENDPOINT}/profile/image`, fromData);
+}
+
+export function deleteAvatar() {
+  return axios.delete(`${API_ENDPOINT}/profile/image`);
 }
 
 //write post
@@ -95,4 +114,19 @@ export function getBlackList() {
 
 export function removeOfBlockedList(blacklisID: number) {
   return axios.delete(`${API_ENDPOINT}/blacklists/${blacklisID}`);
+}
+
+//edit comment
+export function getCommentByID(commentID: any) {
+  return axios.get(`${API_ENDPOINT}/board/1/post/2153/comments/${commentID}`);
+}
+
+export function editComment(postID: any, commentID: any, text: string) {
+  const body = {
+    content: text,
+  };
+  return axios.put(
+    `${API_ENDPOINT}/board/1/post/${postID}/comments/${commentID}`,
+    body
+  );
 }

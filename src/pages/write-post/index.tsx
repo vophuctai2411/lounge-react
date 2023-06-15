@@ -98,12 +98,7 @@ function PostWriter() {
   };
 
   const removeAFile = (index: number) => {
-    // if (!this.postData.postImages[index].file) {
-    //   this.postData.removedImageIds.push(this.postData.postImages[index].id);
-    // }
-    // this.postData.postImages.splice(index, 1);
     const newArr = postImages.filter((i, ind) => ind !== index);
-
     setPostImages(newArr);
   };
 

@@ -23,6 +23,8 @@ function CommentList({ postID, setParentID }: any) {
     },
   });
 
+  console.log("reload comment list");
+
   return (
     <>
       <ul className="comment_order">

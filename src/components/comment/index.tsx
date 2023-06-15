@@ -5,8 +5,10 @@ import Reaction from "../reaction";
 import default_avatar from "@/assets/images/deafault_avatar.svg";
 import Modal from "../modal";
 import { useQuery } from "@tanstack/react-query";
-import { getMyInfo } from "@/services/community";
+import { getMyInfo, deleteComment } from "@/services/community";
 import { useState } from "react";
+import { QueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Comment({ data, isReply, setParentID }: any) {
   //my comment - text - sua xoa
@@ -19,6 +21,7 @@ function Comment({ data, isReply, setParentID }: any) {
   const { data: myInfo } = useQuery({
     queryKey: ["myInfo"],
     queryFn: () => getMyInfo().then((res) => res.data.user),
+    staleTime: Infinity,
   });
 
   const [isShowModal, setIsShowModal] = useState(false);
@@ -64,6 +67,7 @@ function Comment({ data, isReply, setParentID }: any) {
                       isIcon={data.content.includes("<img")}
                       onClose={() => setIsShowModal(false)}
                       openConfirm={() => setIsShowConfirmModal(true)}
+                      cmtID={data.id}
                     />
                   ) : (
                     <OtherPostModal onClose={() => setIsShowModal(false)} />
@@ -73,8 +77,9 @@ function Comment({ data, isReply, setParentID }: any) {
 
               {isShowConfirmModal && (
                 <ConfirmModal
+                  postID={data.post_id}
                   cmtID={data.id}
-                  onClose={setIsShowConfirmModal(false)}
+                  onClose={() => setIsShowConfirmModal(false)}
                 />
               )}
             </div>
@@ -107,13 +112,24 @@ function Comment({ data, isReply, setParentID }: any) {
   );
 }
 
-function MyPostModal({ isIcon, onClose, openConfirm }: any) {
+function MyPostModal({ isIcon, onClose, openConfirm, cmtID }: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Modal
       modalBox={
         <div className="modal_box more_modal_box">
           <ul>
-            {!isIcon && <li>수정</li>}
+            {!isIcon && (
+              <li
+                onClick={() =>
+                  navigate("/edit-comment/" + cmtID + location.search)
+                }
+              >
+                수정
+              </li>
+            )}
             <li
               onClick={() => {
                 openConfirm();
@@ -130,14 +146,26 @@ function MyPostModal({ isIcon, onClose, openConfirm }: any) {
   );
 }
 
-function ConfirmModal({ cmtID, onClose, blacklistItemID, refetchList }: any) {
+function ConfirmModal({ postID, cmtID, onClose }: any) {
   async function remove() {
-    // await removeOfBlockedList(blacklistItemID);
-    // refetchList();
+    await deleteComment(postID, cmtID);
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: Infinity,
+        },
+      },
+    });
+
+    await queryClient.refetchQueries({
+      queryKey: ["comments_Query", postID],
+      type: "active",
+      exact: true,
+    });
+
     onClose();
   }
-
-  console.log("flkjdklfjsdklfjdslk");
 
   return (
     <Modal

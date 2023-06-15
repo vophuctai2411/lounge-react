@@ -1,10 +1,12 @@
-import { routerType } from "../types/router.types";
-import Community from "./community";
-import PostDetail from "./post-detail";
-import Searching from "./searching";
-import PostWriter from "./write-post";
-import Profile from "./profile";
-import Blocked from "./blocked";
+import { routerType } from "@/types/router.types";
+import Community from "@/pages/community";
+import PostDetail from "@/pages/post-detail";
+import Searching from "@/pages/searching";
+import PostWriter from "@/pages/write-post";
+import Profile from "@/pages/profile";
+import Blocked from "@/pages/blocked";
+import EditComment from "@/pages/edit-comment";
+import EditProfile from "@/pages/edit-profile";
 
 const pagesData: routerType[] = [
   {
@@ -33,9 +35,19 @@ const pagesData: routerType[] = [
     title: "edit-post",
   },
   {
+    path: "edit-comment/:id",
+    element: <EditComment />,
+    title: "edit-comment",
+  },
+  {
     path: "profile",
     element: <Profile />,
     title: "profile",
+  },
+  {
+    path: "edit-profile",
+    element: <EditProfile />,
+    title: "edit-profile",
   },
   {
     path: "blocked-user",
