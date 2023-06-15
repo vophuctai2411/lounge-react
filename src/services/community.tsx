@@ -72,6 +72,10 @@ export function deleteComment(postID: number, commentID: number) {
   );
 }
 
+export function deletePostAPI(postID: number) {
+  return axios.delete(`${API_ENDPOINT}/board/1/posts/${postID}`);
+}
+
 //profile page
 export function get_myposts(page: number) {
   return axios.get(`${API_ENDPOINT}/board/1/my-posts?page=${page}`);

@@ -63,14 +63,14 @@ function Comment({ data, isReply, setParentID }: any) {
               {isShowModal && (
                 <>
                   {myInfo.id == data.user.id ? (
-                    <MyPostModal
+                    <MyCommentModal
                       isIcon={data.content.includes("<img")}
                       onClose={() => setIsShowModal(false)}
                       openConfirm={() => setIsShowConfirmModal(true)}
                       cmtID={data.id}
                     />
                   ) : (
-                    <OtherPostModal onClose={() => setIsShowModal(false)} />
+                    <OtherCommentModal onClose={() => setIsShowModal(false)} />
                   )}
                 </>
               )}
@@ -112,7 +112,7 @@ function Comment({ data, isReply, setParentID }: any) {
   );
 }
 
-function MyPostModal({ isIcon, onClose, openConfirm, cmtID }: any) {
+function MyCommentModal({ isIcon, onClose, openConfirm, cmtID }: any) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -188,13 +188,22 @@ function ConfirmModal({ postID, cmtID, onClose }: any) {
   );
 }
 
-function OtherPostModal({ onClose }: any) {
+function OtherCommentModal({ onClose }: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Modal
       modalBox={
         <div className="modal_box more_modal_box">
           <ul>
-            <li>신고</li>
+            <li
+              onClick={() => {
+                navigate("/report" + location.search);
+              }}
+            >
+              신고
+            </li>
             <li onClick={() => onClose()}>취소</li>
           </ul>
         </div>

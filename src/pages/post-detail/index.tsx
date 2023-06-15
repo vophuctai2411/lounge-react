@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   blockUser,
+  deletePostAPI,
   getMyInfo,
   getPostByID,
   pickOrUnpickPost,
@@ -18,6 +19,12 @@ import more_action_icon from "@/assets/icons/more_action.svg";
 import bookmark_success_modal_icon from "@/assets/icons/bookmark_success.svg";
 import Modal from "@/components/modal";
 
+type detailModalType =
+  | "show_more"
+  | "bookmark_success"
+  | "confirm_delete"
+  | false;
+
 function PostDetail() {
   const { id } = useParams();
   const { data } = useQuery({
@@ -27,9 +34,8 @@ function PostDetail() {
   });
 
   const [parentID, setParentID] = useState(null);
-  const [isShowMoreModal, setIsShowMoreModal] = useState(false);
-  const [isShowBookmarkSuccessModal, setIsShowBookmarkSuccessModal] =
-    useState(false);
+
+  const [showModalType, setShowModalType] = useState<detailModalType>(false);
 
   const { data: myInfo } = useQuery({
     queryKey: ["myInfo"],
@@ -46,7 +52,7 @@ function PostDetail() {
     const res = await pickOrUnpickPost(data.id);
 
     if (res.data.success) {
-      if (!isPostPick) setIsShowBookmarkSuccessModal(true);
+      if (!isPostPick) setShowModalType("bookmark_success");
       setIsPostPick((preStt: any) => !preStt);
     }
   }
@@ -63,31 +69,38 @@ function PostDetail() {
               alt="search icon"
             />
           </button>
-          <button onClick={() => setIsShowMoreModal(true)}>
+          <button onClick={() => setShowModalType("show_more")}>
             <img src={more_action_icon} alt="profile icon" />
           </button>
         </>
       </Header>
-      {isShowBookmarkSuccessModal && (
-        <PickSuccessModal
-          onClose={() => setIsShowBookmarkSuccessModal(false)}
-        />
+
+      {showModalType.toString() == "bookmark_success" && (
+        <PickSuccessModal onClose={() => setShowModalType(false)} />
       )}
 
-      {isShowMoreModal && (
+      {showModalType.toString() == "show_more" && (
         <>
           {data.user_id == myInfo.id ? (
             <MyPostMoreModal
-              onClose={() => setIsShowMoreModal(false)}
+              onClose={() => setShowModalType(false)}
               postID={data?.id}
+              setShowModalType={setShowModalType}
             />
           ) : (
             <OtherPersonPostMoreModal
-              onClose={() => setIsShowMoreModal(false)}
+              onClose={() => setShowModalType(false)}
               postUserID={data?.user_id}
             />
           )}
         </>
+      )}
+
+      {showModalType.toString() == "confirm_delete" && (
+        <ConfirmDeletePostModal
+          postID={data?.id}
+          onClose={() => setShowModalType(false)}
+        />
       )}
 
       <main style={{ backgroundColor: "rgb(249, 250, 251)" }}>
@@ -106,7 +119,7 @@ function PostDetail() {
   );
 }
 
-function MyPostMoreModal({ onClose, postID }: any) {
+function MyPostMoreModal({ onClose, postID, setShowModalType }: any) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -120,7 +133,7 @@ function MyPostMoreModal({ onClose, postID }: any) {
             >
               수정
             </li>
-            <li>삭제</li>
+            <li onClick={() => setShowModalType("confirm_delete")}>삭제</li>
             <li onClick={() => onClose()}>취소</li>
           </ul>
         </div>
@@ -136,8 +149,6 @@ function OtherPersonPostMoreModal({ onClose, postUserID }: any) {
   async function block() {
     const res = await blockUser(postUserID);
     if (res.data.success) navigate("/board" + location.search);
-
-    onClose();
   }
 
   return (
@@ -145,7 +156,13 @@ function OtherPersonPostMoreModal({ onClose, postUserID }: any) {
       modalBox={
         <div className="modal_box more_modal_box">
           <ul>
-            <li>신고</li>
+            <li
+              onClick={() => {
+                navigate("/report" + location.search);
+              }}
+            >
+              신고
+            </li>
             <li onClick={() => block()}>이 사용자의 글 보지 않기</li>
             <li onClick={() => onClose()}>취소</li>
           </ul>
@@ -168,6 +185,35 @@ function PickSuccessModal({ onClose }: any) {
         <>
           <button className="acceptButton" onClick={() => onClose()}>
             확인
+          </button>
+        </>
+      }
+    />
+  );
+}
+
+function ConfirmDeletePostModal({ onClose, postID }: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  async function deletePost() {
+    const res = await deletePostAPI(postID);
+    if (res.data.success) navigate("/board" + location.search);
+  }
+  return (
+    <Modal
+      content={
+        <div className="modal_des_box">
+          <p>게시글을 삭제하시겠습니까?</p>
+        </div>
+      }
+      footer={
+        <>
+          <button className="acceptButton" onClick={() => deletePost()}>
+            확인
+          </button>
+          <button className="cancelButton" onClick={() => onClose()}>
+            취소
           </button>
         </>
       }

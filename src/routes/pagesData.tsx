@@ -7,6 +7,7 @@ import Profile from "@/pages/profile";
 import Blocked from "@/pages/blocked";
 import EditComment from "@/pages/edit-comment";
 import EditProfile from "@/pages/edit-profile";
+import Report from "@/pages/report";
 
 const pagesData: routerType[] = [
   {
@@ -53,6 +54,11 @@ const pagesData: routerType[] = [
     path: "blocked-user",
     element: <Blocked />,
     title: "block-user",
+  },
+  {
+    path: "report",
+    element: <Report />,
+    title: "report",
   },
 ];
 
