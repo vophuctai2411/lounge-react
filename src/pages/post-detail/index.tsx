@@ -4,7 +4,13 @@ import CommentList from "@/components/comment-list";
 import CommentWriter from "./components/comment-writer";
 import Post from "@/components/post";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   blockUser,
   deletePostAPI,
@@ -91,6 +97,7 @@ function PostDetail() {
             <OtherPersonPostMoreModal
               onClose={() => setShowModalType(false)}
               postUserID={data?.user_id}
+              postID={data.id}
             />
           )}
         </>
@@ -142,9 +149,20 @@ function MyPostMoreModal({ onClose, postID, setShowModalType }: any) {
   );
 }
 
-function OtherPersonPostMoreModal({ onClose, postUserID }: any) {
+function OtherPersonPostMoreModal({ onClose, postUserID, postID }: any) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+  const Authorization = searchParams.get("Authorization");
+  const params: any = {
+    type: 2,
+    reportedUserId: postUserID,
+    boardId: 1,
+    postId: postID,
+    userId,
+    Authorization,
+  };
 
   async function block() {
     const res = await blockUser(postUserID);
@@ -158,7 +176,10 @@ function OtherPersonPostMoreModal({ onClose, postUserID }: any) {
           <ul>
             <li
               onClick={() => {
-                navigate("/report" + location.search);
+                navigate({
+                  pathname: "/report",
+                  search: `?${createSearchParams(params)}`,
+                });
               }}
             >
               신고

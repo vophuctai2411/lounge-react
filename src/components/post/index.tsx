@@ -11,6 +11,7 @@ import { elapsedTime } from "@/utils/utils";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Post({ data }: PostType) {
+  const isEdit = true;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -80,13 +81,13 @@ function Post({ data }: PostType) {
           <span
             dangerouslySetInnerHTML={{
               __html:
-                data.content.length > 90
+                data.content.length > 90 && !isEdit
                   ? data.content.substring(0, 90)
                   : data.content,
             }}
           />
 
-          {data.content.length > 90 && (
+          {data.content.length > 90 && !isEdit && (
             <span className="content_more_btn">
               ... <b>더 보기</b>
             </span>

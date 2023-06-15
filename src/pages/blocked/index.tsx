@@ -39,12 +39,12 @@ function Blocked() {
               <div className="blocked_user_container">
                 <ul>
                   {data?.map((item: any) => (
-                    <li>
+                    <li key={`block-user-${item.id}`}>
                       <img
                         src={item.profile_image?.url_180 || default_avatar}
                         alt="프로필 이미지"
                       />
-                      <p>{item.blocked_user.name}</p>
+                      <p>{item?.blocked_user?.name}</p>
                       <button
                         onClick={() => {
                           setSelectedUser(item);

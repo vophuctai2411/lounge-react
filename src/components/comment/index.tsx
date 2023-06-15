@@ -8,7 +8,13 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyInfo, deleteComment } from "@/services/community";
 import { useState } from "react";
 import { QueryClient } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 function Comment({ data, isReply, setParentID }: any) {
   //my comment - text - sua xoa
@@ -70,7 +76,10 @@ function Comment({ data, isReply, setParentID }: any) {
                       cmtID={data.id}
                     />
                   ) : (
-                    <OtherCommentModal onClose={() => setIsShowModal(false)} />
+                    <OtherCommentModal
+                      onClose={() => setIsShowModal(false)}
+                      data={data}
+                    />
                   )}
                 </>
               )}
@@ -188,9 +197,23 @@ function ConfirmModal({ postID, cmtID, onClose }: any) {
   );
 }
 
-function OtherCommentModal({ onClose }: any) {
+function OtherCommentModal({ onClose, data }: any) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+  const Authorization = searchParams.get("Authorization");
+
+  const params: any = {
+    type: 3,
+    reportedUserId: data.user.id,
+    boardId: 1,
+    postId: data.post_id,
+    commentId: data.id,
+    userId,
+    Authorization,
+  };
 
   return (
     <Modal
@@ -199,7 +222,10 @@ function OtherCommentModal({ onClose }: any) {
           <ul>
             <li
               onClick={() => {
-                navigate("/report" + location.search);
+                navigate({
+                  pathname: "/report",
+                  search: `?${createSearchParams(params)}`,
+                });
               }}
             >
               신고

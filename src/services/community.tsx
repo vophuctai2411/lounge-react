@@ -134,3 +134,9 @@ export function editComment(postID: any, commentID: any, text: string) {
     body
   );
 }
+
+//report
+
+export function reportPostAndComment(params: any) {
+  return axios.post(`${API_ENDPOINT}/reports`, params);
+}
