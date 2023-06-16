@@ -1,6 +1,6 @@
 export function elapsedTime(date: any) {
-  const start = new Date(date);
-  const end = new Date();
+  const start: any = new Date(date);
+  const end: any = new Date();
 
   const diff = (end - start) / 1000;
 
@@ -8,7 +8,7 @@ export function elapsedTime(date: any) {
     numeric: "auto",
   });
 
-  const times = [
+  const times: any = [
     { name: "year", milliSeconds: 60 * 60 * 24 * 365 },
     { name: "month", milliSeconds: 60 * 60 * 24 * 30 },
     { name: "day", milliSeconds: 60 * 60 * 24 },

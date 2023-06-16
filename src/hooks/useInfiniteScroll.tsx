@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { debounce } from "lodash";
 
 const useInfiniteScroll = (callback: any) => {
   const [isFetching, setIsFetching] = useState(false);
@@ -9,19 +10,18 @@ const useInfiniteScroll = (callback: any) => {
   }, []);
 
   useEffect(() => {
-    if (!isFetching) return;
-
-    callback();
+    if (isFetching) callback();
   }, [isFetching]);
 
   function handleScroll() {
     if (
-      window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight ||
-      isFetching
+      window.innerHeight + document.documentElement.scrollTop ==
+      document.documentElement.offsetHeight
     )
-      return;
-    setIsFetching(true);
+      setIsFetching(true);
+    else {
+      setIsFetching(false);
+    }
   }
 
   return [isFetching, setIsFetching] as const;

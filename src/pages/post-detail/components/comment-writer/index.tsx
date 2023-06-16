@@ -18,7 +18,7 @@ function CommentWriter({ postID, parentID }: any) {
   const [textValue, setTextValue] = useState("");
   const [isShowIconModal, setIsShowIconModal] = useState(false);
   const [selectedPackgeID, setSelectedPackageID] = useState();
-  const [chosenIcon, setChosenIcon] = useState();
+  const [chosenIcon, setChosenIcon] = useState<any>();
   const dispatch = useDispatch();
 
   const sendMessage = async () => {

@@ -42,12 +42,23 @@ function Community() {
           ],
           []
         );
-        if (existedIdArr.includes(fisrtResponse.id)) return preState;
+        if (
+          existedIdArr.includes(fisrtResponse?.id) ||
+          response.data.posts.data.length == 0
+        )
+          return preState;
         else return [...preState, ...response.data.posts.data];
       });
       setPostResponse(response.data.posts);
     }
   };
+
+  function scrollTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
 
   useEffect(() => {
     getData();
@@ -75,7 +86,7 @@ function Community() {
         <PostList
           data={postList}
           getData={() => setPage((page) => page + 1)}
-          isLastPage={postResponse?.current_page === postResponse?.last_page}
+          isLastPage={postResponse?.current_page >= postResponse?.last_page}
         />
       </div>
 
@@ -83,7 +94,7 @@ function Community() {
         className="floating_btn_wrap"
         style={{ bottom: "20px", transition: "bottom 0.5s ease 0s" }}
       >
-        <button className="floating_scroll_top_btn" style={{}}>
+        <button className="floating_scroll_top_btn" onClick={() => scrollTop()}>
           <img src={scroll_top_icon} alt="스크롤 위로" />
         </button>
         <button className="floating_write_btn">

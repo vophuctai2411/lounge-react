@@ -8,10 +8,11 @@ import Deafult_Avatar_Image from "@/assets/images/deafault_avatar.svg";
 import { useQuery } from "@tanstack/react-query";
 import { get_all_categories } from "@/services/community";
 import { elapsedTime } from "@/utils/utils";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 function Post({ data }: PostType) {
-  const isEdit = true;
+  let { id } = useParams();
+  const isDetail = id;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,82 +31,92 @@ function Post({ data }: PostType) {
     navigate("/detail/" + id + location.search);
   };
 
+  function shortcutContent(content: string) {
+    let final = content.replace(/<img[^>]*>/g, "(이모티콘)");
+    return final.substring(0, 90);
+  }
+
+  const content = isDetail ? data.content : shortcutContent(data.content);
+
   return (
     <div className="post_container">
-      <div className="board_row" onClick={() => directToDetailPage(data.id)}>
-        <div className="post_user_profile">
-          <img
-            src={
-              data.user?.profile_image?.url_180 ||
-              data.user?.profile_image?.url ||
-              Deafult_Avatar_Image
+      <div onClick={() => directToDetailPage(data.id)}>
+        <div className="board_row">
+          <div className="post_user_profile">
+            <img
+              src={
+                data.user?.profile_image?.url_180 ||
+                data.user?.profile_image?.url ||
+                Deafult_Avatar_Image
+              }
+              alt="프로필 이미지"
+            />
+            <div>
+              {data.user ? (
+                <p> {data.user?.name} </p>
+              ) : (
+                <p style={{ color: "rgb(175, 184, 195)" }}>
+                  삭제된 사용자 입니다.
+                </p>
+              )}
+              <span className="post_chip">{postChip}</span>
+            </div>
+          </div>
+        </div>
+
+        {data.images && (
+          <div style={{ display: "inline-block", maxWidth: "100%" }}>
+            <div className="post_img">
+              {data.images.map((i: any) => (
+                <img
+                  src={i.url_340 || i.url_720 || i.url}
+                  alt="이미지"
+                  key={Math.random()}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="board_row">
+          <div
+            className="post_content"
+            style={
+              !isDetail
+                ? {
+                    maxHeight: "72px",
+                    overflow: "hidden",
+                    position: "relative",
+                  }
+                : {}
             }
-            alt="프로필 이미지"
-          />
-          <div>
-            {data.user ? (
-              <p> {data.user?.name} </p>
-            ) : (
-              <p style={{ color: "rgb(175, 184, 195)" }}>
-                삭제된 사용자 입니다.
-              </p>
+          >
+            <span
+              dangerouslySetInnerHTML={{
+                __html: content,
+              }}
+            />
+
+            {!isDetail && content.length == 90 && (
+              <span className="content_more_btn">
+                ... <b>더 보기</b>
+              </span>
             )}
-            <span className="post_chip">{postChip}</span>
           </div>
         </div>
-      </div>
 
-      {data.images && (
-        <div style={{ display: "inline-block", maxWidth: "100%" }}>
-          <div className="post_img">
-            {data.images.map((i: any) => (
-              <img
-                src={i.url_340 || i.url_720 || i.url}
-                alt="이미지"
-                key={Math.random()}
-              />
-            ))}
+        <div className="board_row">
+          <div className="post_info">
+            <div>
+              <img src={eye_icon} alt="조회수" />
+              <span id="postInterestViewCount">{data.view_count}</span>
+            </div>
+            <div>
+              <img src={star_icon} alt="찜하기" />
+              <span id="postInterestBookmarkCount">{data.picker_count}</span>
+            </div>
+            <span className="post_time">{elapsedTime(data.created_at)}</span>
           </div>
-        </div>
-      )}
-
-      <div className="board_row">
-        <div
-          className="post_content"
-          style={{
-            maxHeight: "72px",
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
-          <span
-            dangerouslySetInnerHTML={{
-              __html:
-                data.content.length > 90 && !isEdit
-                  ? data.content.substring(0, 90)
-                  : data.content,
-            }}
-          />
-
-          {data.content.length > 90 && !isEdit && (
-            <span className="content_more_btn">
-              ... <b>더 보기</b>
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="board_row">
-        <div className="post_info">
-          <div>
-            <img src={eye_icon} alt="조회수" />
-            <span id="postInterestViewCount">{data.view_count}</span>
-          </div>
-          <div>
-            <img src={star_icon} alt="찜하기" />
-            <span id="postInterestBookmarkCount">{data.picker_count}</span>
-          </div>
-          <span className="post_time">{elapsedTime(data.created_at)}</span>
         </div>
       </div>
 

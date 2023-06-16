@@ -12,7 +12,6 @@ import {
   createSearchParams,
   useLocation,
   useNavigate,
-  useParams,
   useSearchParams,
 } from "react-router-dom";
 
@@ -199,7 +198,6 @@ function ConfirmModal({ postID, cmtID, onClose }: any) {
 
 function OtherCommentModal({ onClose, data }: any) {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId");

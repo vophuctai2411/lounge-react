@@ -5,7 +5,6 @@ import search_icon from "@/assets/icons/search.svg";
 import { useEffect, useState } from "react";
 import { getAllPost } from "@/services/community";
 import NoData from "@/components/no-data";
-import ReactDOMServer from "react-dom/server";
 
 function Searching() {
   const [search, setSearch] = useState("");
@@ -15,7 +14,7 @@ function Searching() {
   async function searchAction() {
     const params = {
       searchText: search,
-      perPage: 5,
+      perPage: 30,
       page: page,
     };
     const res = await getAllPost(params);

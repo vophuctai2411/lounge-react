@@ -10,7 +10,6 @@ import { useRef, useState } from "react";
 import Modal from "@/components/modal";
 import {
   EditPost,
-  getMyInfo,
   getPostByID,
   get_all_categories,
   writeNewPost,

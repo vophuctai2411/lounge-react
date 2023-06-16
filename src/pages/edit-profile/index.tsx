@@ -1,7 +1,6 @@
 import "./index.scss";
 import Header from "@/components/header";
 import noonting_edit_icon from "@/assets/icons/noonting_edit.svg";
-import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "@/components/modal";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -19,12 +18,11 @@ function EditProfile() {
   const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
   const [isShowImageModal, setIsShowImageModal] = useState(false);
 
-  const { data: myInfo } = useQuery({
+  useQuery({
     queryKey: ["myInfo"],
     queryFn: () => getMyInfo().then((res) => res.data.user),
     onSuccess: (data) => {
       setName(data.name);
-      console.log(data);
       const avatarInfo = {
         file: null,
         url: data.profile_image?.url_180,
