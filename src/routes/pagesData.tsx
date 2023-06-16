@@ -8,6 +8,7 @@ import Blocked from "@/pages/blocked";
 import EditComment from "@/pages/edit-comment";
 import EditProfile from "@/pages/edit-profile";
 import Report from "@/pages/report";
+import NotFoundPage from "@/pages/notFound";
 
 const pagesData: routerType[] = [
   {
@@ -59,6 +60,11 @@ const pagesData: routerType[] = [
     path: "report",
     element: <Report />,
     title: "report",
+  },
+  {
+    path: "404",
+    element: <NotFoundPage />,
+    title: "not found",
   },
 ];
 

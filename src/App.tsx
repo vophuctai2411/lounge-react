@@ -2,7 +2,6 @@ import "./App.scss";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./routes/router";
 import axios from "axios";
-import NotFoundPage from "./pages/notFound";
 
 const URLSearch = new URLSearchParams(location.search);
 axios.defaults.headers.common["C9"] = URLSearch.get("C9");
@@ -49,9 +48,10 @@ axios.interceptors.response.use(
 );
 
 function App() {
-  const isEnableCommunity =
-    URLSearch.get("Authorization") && URLSearch.get("userId");
-  if (!isEnableCommunity) return <NotFoundPage />;
+  const isErrorPage =
+    (!URLSearch.get("Authorization") || !URLSearch.get("userId")) &&
+    !window.location.pathname.includes("/404");
+  if (isErrorPage) window.location.replace("/404");
 
   return (
     <BrowserRouter>
