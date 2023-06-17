@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { get_all_categories } from "@/services/community";
 import { elapsedTime } from "@/utils/utils";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import SkeletonBox from "../SkeletonBox";
 
 function Post({ data }: PostType) {
   let { id } = useParams();
@@ -102,6 +103,7 @@ function Post({ data }: PostType) {
                 ... <b>더 보기</b>
               </span>
             )}
+            <SkeletonBox numOfLines={10} />
           </div>
         </div>
 

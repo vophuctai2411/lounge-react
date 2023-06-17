@@ -16,21 +16,17 @@ function Community() {
   const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [chosenCategory, setChosenCategory] = useState<number>();
-  const previousChosenCategory = useRef<any>();
 
   const getData = async () => {
-    const isChangeCategory = previousChosenCategory.current !== chosenCategory;
-
     const params = {
       ...(chosenCategory && { "postCategories[]": chosenCategory }),
       perPage: 5,
-      page: isChangeCategory ? 1 : page,
+      page: page,
     };
     const response = await getAllPost(params);
     if (response.data.success) {
       setPostList((preState) => {
-        if (isChangeCategory) {
-          previousChosenCategory.current = chosenCategory;
+        if (page == 1) {
           return response.data.posts.data;
         }
 
@@ -61,8 +57,14 @@ function Community() {
   }
 
   useEffect(() => {
-    getData();
+    if (page != postResponse?.current_page || page == 1) getData();
   }, [page, chosenCategory]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [chosenCategory]);
+
+  console.log("community");
 
   return (
     <div className="wrap">
@@ -83,9 +85,10 @@ function Community() {
       </Header>
       <div className="posts">
         <Categories setChosenCategory={setChosenCategory} />
+
         <PostList
           data={postList}
-          getData={() => setPage((page) => page + 1)}
+          newPage={() => setPage((page) => page + 1)}
           isLastPage={postResponse?.current_page >= postResponse?.last_page}
         />
       </div>

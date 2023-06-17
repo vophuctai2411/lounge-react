@@ -5,7 +5,6 @@ export type modalType = {
   content?: TSX_Element_Type;
   footer?: TSX_Element_Type;
   modalBox?: TSX_Element_Type;
-
 };
 
 export type categoryType = {
@@ -26,6 +25,6 @@ export type PostType = {
 
 export type PostListType = {
   data: any[];
-  getData: any;
-  isLastPage?: boolean
+  newPage: any;
+  isLastPage: boolean;
 };
