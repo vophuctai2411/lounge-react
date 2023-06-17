@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { debounce } from "lodash";
 
 const useInfiniteScroll = (callback: any) => {
   const [isFetching, setIsFetching] = useState(false);

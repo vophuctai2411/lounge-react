@@ -101,7 +101,7 @@ function Profile() {
 
         <PostList
           data={postResponse?.data}
-          getData={() => setPage((page) => page + 1)}
+          newPage={() => setPage((page) => page + 1)}
           isLastPage={postResponse?.current_page === postResponse?.last_page}
         />
       </main>
