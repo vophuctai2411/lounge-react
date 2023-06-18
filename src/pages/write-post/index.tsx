@@ -14,7 +14,7 @@ import {
   get_all_categories,
   writeNewPost,
 } from "@/services/community";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -25,8 +25,7 @@ function PostWriter() {
   const [postContent, setPostContent] = useState("");
   const [isSecret, setIsSecret] = useState(0);
   const [chosenCategory, setChosenCategory] = useState<any>();
-  const [isShowPrivacyModal, setIsShowPrivacyModal] = useState(false);
-  const [isShowCategoriesModal, setIsShowCategoriesModal] = useState(false);
+  const [isShowModal, setIsShowModal] = useState<number | boolean>(false);
 
   let { id: postID } = useParams();
   const isEdit = !!postID;
@@ -42,7 +41,7 @@ function PostWriter() {
           staleTime: Infinity,
         },
         {
-          queryKey: ["postDetail_Query"],
+          queryKey: ["postDetail_Query", postID],
           queryFn: () =>
             getPostByID(postID).then((response: any) => response.data?.post),
           onSuccess: (data: any) => {
@@ -50,7 +49,7 @@ function PostWriter() {
             setPostContent(data.content);
             setIsSecret(data.is_secret);
           },
-          staleTime: Infinity,
+          enabled: !(postImages?.length > 0 || postContent),
         },
       ],
     });
@@ -103,6 +102,7 @@ function PostWriter() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
 
   const submitPost = async () => {
     let formData = new FormData();
@@ -119,6 +119,10 @@ function PostWriter() {
       : await writeNewPost(formData);
     if (res.data.success) {
       const id = postID || res.data.newPost.id;
+      await queryClient.prefetchQuery({
+        queryKey: ["postDetail_Query", id],
+        queryFn: () => getPostByID(id).then((response) => response.data?.post),
+      });
       navigate("/detail/" + id + location.search);
     }
   };
@@ -132,7 +136,7 @@ function PostWriter() {
     <div className="wrap post-writer-container">
       <Header
         title={
-          <h2 onClick={() => setIsShowPrivacyModal(true)}>
+          <h2 onClick={() => setIsShowModal(1)}>
             <div>
               <div>{isSecret ? "나만보기" : "전체보기"}</div>
             </div>
@@ -142,29 +146,38 @@ function PostWriter() {
       >
         <button
           className="header_activity_right_btn"
-          onClick={() => submitPost()}
+          onClick={() => setIsShowModal(3)}
         >
           등록
         </button>
       </Header>
-      {isShowPrivacyModal && (
+      {isShowModal == 1 && (
         <PrivacyModal
-          onClose={() => setIsShowPrivacyModal(false)}
+          onClose={() => setIsShowModal(false)}
           setIsSecret={setIsSecret}
         />
       )}
 
-      <button
-        className="select_category"
-        onClick={() => setIsShowCategoriesModal(true)}
-      >
+      <button className="select_category" onClick={() => setIsShowModal(2)}>
         <span>{chosenCategory?.name || "게시글의 주제를 선택해 주세요."}</span>
         <img src={writer_select_category} alt="icon select category" />
       </button>
-      {isShowCategoriesModal && (
+      {isShowModal == 2 && (
         <CategoriesModal
           setChosenCategory={setChosenCategory}
-          onClose={() => setIsShowCategoriesModal(false)}
+          onClose={() => setIsShowModal(false)}
+        />
+      )}
+
+      {isShowModal == 3 && (
+        <ConfirmModal
+          postID={postID}
+          onClose={() => setIsShowModal(false)}
+          isEdit={isEdit}
+          isSecret={isSecret}
+          chosenCategory={chosenCategory}
+          postContent={postContent}
+          postImages={postImages}
         />
       )}
 
@@ -323,6 +336,63 @@ function CategoriesModal({ setChosenCategory, onClose }: any) {
             ))}
           </ul>
         </div>
+      }
+    />
+  );
+}
+
+function ConfirmModal({
+  postID,
+  onClose,
+  isEdit,
+  isSecret,
+  chosenCategory,
+  postContent,
+  postImages,
+}: any) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+
+  const submitPost = async () => {
+    let formData = new FormData();
+    formData.append("isSecret", isSecret.toString());
+    formData.append("postCategoryId", chosenCategory.id);
+    formData.append("subject", "default subject");
+    formData.append("content", postContent);
+    for (let i = 0; i < postImages.length; i++) {
+      formData.append("uploadedImages[]", postImages[i].file);
+    }
+
+    const res = isEdit
+      ? await EditPost(formData, postID)
+      : await writeNewPost(formData);
+    if (res.data.success) {
+      const id = postID || res.data.newPost.id;
+      await queryClient.prefetchQuery({
+        queryKey: ["postDetail_Query", id],
+        queryFn: () => getPostByID(id).then((response) => response.data?.post),
+      });
+      navigate("/detail/" + id + location.search);
+    }
+  };
+
+  return (
+    <Modal
+      content={
+        <div className="modal_des_box">
+          <p>게시글을 등록하시겠습니까?</p>
+        </div>
+      }
+      footer={
+        <>
+          <button className="acceptButton" onClick={() => submitPost()}>
+            확인
+          </button>
+          <button className="cancelButton" onClick={() => onClose()}>
+            취소
+          </button>
+        </>
       }
     />
   );
