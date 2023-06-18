@@ -21,9 +21,10 @@ function CommentList({ postID, setParentID }: any) {
     onSuccess: (data) => {
       dispatch(saveComments(data));
     },
+    enabled: comments.length == 0 || comments[0]?.post_id !== postID,
   });
 
-  console.log("reload comment list");
+  console.log(comments.length);
 
   return (
     <>

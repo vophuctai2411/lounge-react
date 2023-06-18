@@ -37,12 +37,18 @@ function Post({ data }: PostType) {
     return final.substring(0, 90);
   }
 
-  const content = isDetail ? data.content : shortcutContent(data.content);
+  let content = isDetail ? data.content : shortcutContent(data.content);
+  content = content.replace(/\n/g, "<br />");
 
   return (
     <div className="post_container">
       <div onClick={() => directToDetailPage(data.id)}>
         <div className="board_row">
+          {isDetail && (
+            <span className="post_chip" style={{ marginBottom: 16 }}>
+              {postChip}
+            </span>
+          )}
           <div className="post_user_profile">
             <img
               src={
@@ -60,12 +66,18 @@ function Post({ data }: PostType) {
                   삭제된 사용자 입니다.
                 </p>
               )}
-              <span className="post_chip">{postChip}</span>
+              {isDetail ? (
+                <span className="post_time">
+                  {elapsedTime(data.created_at)}
+                </span>
+              ) : (
+                <span className="post_chip">{postChip}</span>
+              )}
             </div>
           </div>
         </div>
 
-        {data.images && (
+        {data?.images?.length > 0 && (
           <div style={{ display: "inline-block", maxWidth: "100%" }}>
             <div className="post_img">
               {data.images.map((i: any) => (
@@ -103,7 +115,6 @@ function Post({ data }: PostType) {
                 ... <b>더 보기</b>
               </span>
             )}
-            <SkeletonBox numOfLines={10} />
           </div>
         </div>
 
@@ -117,7 +128,9 @@ function Post({ data }: PostType) {
               <img src={star_icon} alt="찜하기" />
               <span id="postInterestBookmarkCount">{data.picker_count}</span>
             </div>
-            <span className="post_time">{elapsedTime(data.created_at)}</span>
+            {!isDetail && (
+              <span className="post_time">{elapsedTime(data.created_at)}</span>
+            )}
           </div>
         </div>
       </div>

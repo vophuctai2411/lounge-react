@@ -274,6 +274,10 @@ table {
 
 * {
   box-sizing: border-box;
+  scrollbar-width: none; //firefox
+  &::-webkit-scrollbar {
+    display: none; //Chrome, safari, opera
+  }
 }
 input:focus,
 textarea:focus {

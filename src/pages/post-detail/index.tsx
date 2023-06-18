@@ -46,6 +46,7 @@ function PostDetail() {
   const { data: myInfo } = useQuery({
     queryKey: ["myInfo"],
     queryFn: () => getMyInfo().then((res) => res.data.user),
+    staleTime: Infinity,
   });
 
   const [isPostPick, setIsPostPick] = useState<any>();
@@ -113,14 +114,21 @@ function PostDetail() {
       <main style={{ backgroundColor: "rgb(249, 250, 251)" }}>
         <div className="post_wrap">{data && <Post data={data} />}</div>
 
-        <div className="comment_wrap">
-          <div className="comment_container">
-            <CommentList postID={data?.id} setParentID={setParentID} />
+        {data?.id && (
+          <div className="comment_wrap">
+            <div className="comment_container">
+              <CommentList postID={data?.id} setParentID={setParentID} />
+            </div>
+
+            <div className="comment_action">
+              <CommentWriter
+                postID={data?.id}
+                parentID={parentID}
+                setParentID={setParentID}
+              />
+            </div>
           </div>
-          <div className="comment_action">
-            <CommentWriter postID={data?.id} parentID={parentID} />
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );

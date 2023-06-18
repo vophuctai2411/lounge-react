@@ -93,7 +93,9 @@ function Comment({ data, isReply, setParentID }: any) {
             </div>
             <div
               className="comment_text"
-              dangerouslySetInnerHTML={{ __html: data.content }}
+              dangerouslySetInnerHTML={{
+                __html: data.content.replace(/\n/g, "<br />"),
+              }}
             />
             <div className="comment_activity">
               <Reaction

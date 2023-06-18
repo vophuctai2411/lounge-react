@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { saveComments } from "@/slices/commentsSlice";
 import { useDispatch } from "react-redux";
 
-function CommentWriter({ postID, parentID }: any) {
+function CommentWriter({ postID, parentID, setParentID }: any) {
   const [textValue, setTextValue] = useState("");
   const [isShowIconModal, setIsShowIconModal] = useState(false);
   const [selectedPackgeID, setSelectedPackageID] = useState();
@@ -46,6 +46,7 @@ function CommentWriter({ postID, parentID }: any) {
       getCommentsByPostID(postID).then((response) => {
         const comments = response.data.comments;
         dispatch(saveComments(comments));
+        setParentID(null);
       });
     }
   };
@@ -69,6 +70,7 @@ function CommentWriter({ postID, parentID }: any) {
         (response: any) => response.data?.emoticonPackage?.emoticons
       ),
     staleTime: Infinity,
+    enabled: selectedPackgeID !== undefined,
   });
 
   return (
