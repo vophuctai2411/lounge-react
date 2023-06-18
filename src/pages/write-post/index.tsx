@@ -90,7 +90,7 @@ function PostWriter() {
       chosenImages.push({
         file: file,
         url: URL.createObjectURL(file),
-        size: (file.size / (1024 * 1024)).toFixed(2),
+        size: file.size,
       });
     }
     setPostImages((preState) => [...preState, ...chosenImages]);
@@ -122,6 +122,11 @@ function PostWriter() {
       navigate("/detail/" + id + location.search);
     }
   };
+
+  const totalSize = postImages.reduce(
+    (previousValue, current) => previousValue + current.size,
+    0
+  );
 
   return (
     <div className="wrap post-writer-container">
@@ -175,7 +180,7 @@ function PostWriter() {
                     <button onClick={() => removeAFile(index)}>
                       <img src={writer_close_image} alt="writer close image" />
                     </button>
-                    <span>{img.size}MB</span>
+                    <span>{(img.size / (1024 * 1024)).toFixed(2)}MB</span>
                   </div>
                 ))}
               </div>
@@ -208,7 +213,9 @@ function PostWriter() {
               <img src={writer_upload_image} alt="upload image" />
               <p>
                 {postImages.length}/10
-                <span> (0.00MB (CHUA TINH) / 100MB) </span>
+                <span>
+                  ({(totalSize / (1024 * 1024)).toFixed(2)}MB / 100MB){" "}
+                </span>
               </p>
             </button>
           </div>

@@ -121,8 +121,10 @@ export function removeOfBlockedList(blacklisID: number) {
 }
 
 //edit comment
-export function getCommentByID(commentID: any) {
-  return axios.get(`${API_ENDPOINT}/board/1/post/2153/comments/${commentID}`);
+export function getCommentByID(postID: any, commentID: any) {
+  return axios.get(
+    `${API_ENDPOINT}/board/1/post/${postID}/comments/${commentID}`
+  );
 }
 
 export function editComment(postID: any, commentID: any, text: string) {

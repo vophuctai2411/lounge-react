@@ -10,7 +10,7 @@ import {
   getCommentsByPostID,
 } from "@/services/community";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { saveComments } from "@/slices/commentsSlice";
 import { useDispatch } from "react-redux";
 
@@ -20,6 +20,7 @@ function CommentWriter({ postID, parentID, setParentID }: any) {
   const [selectedPackgeID, setSelectedPackageID] = useState();
   const [chosenIcon, setChosenIcon] = useState<any>();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const sendMessage = async () => {
     let response;
@@ -43,11 +44,21 @@ function CommentWriter({ postID, parentID, setParentID }: any) {
       setIsShowIconModal(false);
       setChosenIcon(undefined);
 
-      getCommentsByPostID(postID).then((response) => {
-        const comments = response.data.comments;
-        dispatch(saveComments(comments));
-        setParentID(null);
+      // getCommentsByPostID(postID).then((response) => {
+      //   const comments = response.data.comments;
+      //   dispatch(saveComments(comments));
+      //   setParentID(null);
+      // });
+
+      await queryClient.prefetchQuery({
+        queryKey: ["comments_Query", postID],
+        queryFn: () =>
+          getCommentsByPostID(postID).then(
+            (response) => response.data.comments
+          ),
       });
+
+      setParentID(null);
     }
   };
 

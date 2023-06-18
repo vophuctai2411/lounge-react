@@ -5,7 +5,7 @@ import Categories from "./components/categories-section";
 import "./index.scss";
 import PostList from "@/components/post-list";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { getAllPost } from "@/services/community";
 import scroll_top_icon from "@/assets/icons/scroll_top.svg";
 import pencil_icon from "@/assets/icons/pencil.svg";
@@ -16,6 +16,7 @@ function Community() {
   const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [chosenCategory, setChosenCategory] = useState<number>();
+  const [isShowScrollTop, setIsShowScrollTop] = useState(false);
 
   const getData = async () => {
     const params = {
@@ -64,6 +65,21 @@ function Community() {
     setPage(1);
   }, [chosenCategory]);
 
+  window.onscroll = function () {
+    scrollFunction();
+  };
+
+  function scrollFunction() {
+    if (
+      document.body.scrollTop > 50 ||
+      document.documentElement.scrollTop > 50
+    ) {
+      setIsShowScrollTop(true);
+    } else {
+      setIsShowScrollTop(false);
+    }
+  }
+
   return (
     <div className="wrap">
       <Header>
@@ -98,9 +114,14 @@ function Community() {
         className="floating_btn_wrap"
         style={{ bottom: "20px", transition: "bottom 0.5s ease 0s" }}
       >
-        <button className="floating_scroll_top_btn" onClick={() => scrollTop()}>
-          <img src={scroll_top_icon} alt="스크롤 위로" />
-        </button>
+        {isShowScrollTop && (
+          <button
+            className="floating_scroll_top_btn"
+            onClick={() => scrollTop()}
+          >
+            <img src={scroll_top_icon} alt="스크롤 위로" />
+          </button>
+        )}
         <button className="floating_write_btn">
           <Link to={`/postwriter${location.search}`}>
             <img src={pencil_icon} alt="글쓰기" />

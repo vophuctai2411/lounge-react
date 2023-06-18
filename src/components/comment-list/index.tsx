@@ -1,6 +1,6 @@
 import "./index.scss";
 import Comment from "@/components/comment";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCommentsByPostID } from "@/services/community";
 import { useDispatch, useSelector } from "react-redux";
 import { saveComments } from "@/slices/commentsSlice";
@@ -11,18 +11,24 @@ import { useState } from "react";
 
 function CommentList({ postID, setParentID }: any) {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  let comments = useSelector((state: RootState) => state.comments);
+  //let comments = useSelector((state: RootState) => state.comments);
 
-  const { refetch } = useQuery({
+  let comments: any[] =
+    queryClient.getQueryData(["comments_Query", postID]) || [];
+
+  const { data, refetch } = useQuery({
     queryKey: ["comments_Query", postID],
     queryFn: () =>
       getCommentsByPostID(postID).then((response) => response.data.comments),
-    onSuccess: (data) => {
-      dispatch(saveComments(data));
-    },
-    enabled: comments.length == 0 || comments[0]?.post_id !== postID,
+    // onSuccess: (data) => {
+    //   dispatch(saveComments(data));
+    // },
+    enabled: comments?.length == 0 || comments[0]?.post_id !== postID,
   });
+
+  comments = data;
 
   const listTagOder = [
     { key: "earliest", name: "등록순" },

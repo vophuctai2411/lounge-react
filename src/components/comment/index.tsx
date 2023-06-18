@@ -4,22 +4,24 @@ import deleted_comment_icon from "@/assets/icons/deleted_comment.svg";
 import Reaction from "../reaction";
 import default_avatar from "@/assets/images/deafault_avatar.svg";
 import Modal from "../modal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getMyInfo,
   deleteComment,
   getCommentsByPostID,
+  getPostByID,
 } from "@/services/community";
 import { useState } from "react";
-import { QueryClient } from "@tanstack/react-query";
 import {
   createSearchParams,
   useLocation,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { saveComments } from "@/slices/commentsSlice";
+import { RootState } from "@/store";
+import { elapsedTime } from "@/utils/utils";
 
 function Comment({ data, isReply, setParentID }: any) {
   //my comment - text - sua xoa
@@ -29,14 +31,27 @@ function Comment({ data, isReply, setParentID }: any) {
   //my post - edit, delete
   //other post - report, block
 
+  let categories = useSelector((state: RootState) => state.categories);
+
   const { data: myInfo } = useQuery({
     queryKey: ["myInfo"],
     queryFn: () => getMyInfo().then((res) => res.data.user),
     staleTime: Infinity,
   });
 
+  const { data: postInfo } = useQuery({
+    queryKey: ["postDetail_Query", data.post_id],
+    queryFn: () =>
+      getPostByID(data.post_id).then((response) => response.data?.post),
+    staleTime: Infinity,
+  });
+
   const [isShowModal, setIsShowModal] = useState(false);
   const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
+
+  const postChip = categories?.filter(
+    (cate: any) => cate.id == postInfo?.post_category_id
+  )[0]?.name;
 
   return (
     <div className={isReply ? "child_comment" : ""}>
@@ -64,9 +79,11 @@ function Comment({ data, isReply, setParentID }: any) {
                     color: "rgb(255, 255, 255)",
                   }}
                 >
-                  작성자 data fake
+                  {postChip}
                 </span>
-                <span className="comment_time">4일 전</span>
+                <span className="comment_time">
+                  {elapsedTime(data.created_at)}
+                </span>
               </p>
               <button onClick={() => setIsShowModal(true)}>
                 <img src={more_action_icon} alt="more action icon" />
@@ -79,6 +96,7 @@ function Comment({ data, isReply, setParentID }: any) {
                       onClose={() => setIsShowModal(false)}
                       openConfirm={() => setIsShowConfirmModal(true)}
                       cmtID={data.id}
+                      postID={data.post_id}
                     />
                   ) : (
                     <OtherCommentModal
@@ -128,9 +146,19 @@ function Comment({ data, isReply, setParentID }: any) {
   );
 }
 
-function MyCommentModal({ isIcon, onClose, openConfirm, cmtID }: any) {
+function MyCommentModal({ isIcon, onClose, openConfirm, cmtID, postID }: any) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+  const Authorization = searchParams.get("Authorization");
+
+  const params: any = {
+    commentId: cmtID,
+    userId,
+    Authorization,
+  };
 
   return (
     <Modal
@@ -139,9 +167,12 @@ function MyCommentModal({ isIcon, onClose, openConfirm, cmtID }: any) {
           <ul>
             {!isIcon && (
               <li
-                onClick={() =>
-                  navigate("/edit-comment/" + cmtID + location.search)
-                }
+                onClick={() => {
+                  navigate({
+                    pathname: "/edit-comment/" + postID,
+                    search: `?${createSearchParams(params)}`,
+                  });
+                }}
               >
                 수정
               </li>
@@ -164,14 +195,23 @@ function MyCommentModal({ isIcon, onClose, openConfirm, cmtID }: any) {
 
 function ConfirmModal({ postID, cmtID, onClose }: any) {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   async function remove() {
     const res = await deleteComment(postID, cmtID);
-    if (res.data.success)
-      getCommentsByPostID(postID).then((response) => {
-        const comments = response.data.comments;
-        dispatch(saveComments(comments));
+    if (res.data.success) {
+      await queryClient.prefetchQuery({
+        queryKey: ["comments_Query", postID],
+        queryFn: () =>
+          getCommentsByPostID(postID).then(
+            (response) => response.data.comments
+          ),
       });
+    }
+    // getCommentsByPostID(postID).then((response) => {
+    //   const comments = response.data.comments;
+    //   dispatch(saveComments(comments));
+    // });
 
     onClose();
   }

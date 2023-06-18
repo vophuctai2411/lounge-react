@@ -90,6 +90,7 @@ function Profile() {
                       name="Mypost and wishlist group"
                       id={key}
                       checked={mineOrPick == option.id}
+                      onChange={() => {}}
                     />
                     <label htmlFor={key}>{option.text}</label>
                   </li>
@@ -99,11 +100,13 @@ function Profile() {
           </div>
         </section>
 
-        <PostList
-          data={postResponse?.data}
-          newPage={() => setPage((page) => page + 1)}
-          isLastPage={postResponse?.current_page === postResponse?.last_page}
-        />
+        {postResponse && (
+          <PostList
+            data={postResponse?.data}
+            newPage={() => setPage((page) => page + 1)}
+            isLastPage={postResponse?.current_page === postResponse?.last_page}
+          />
+        )}
       </main>
     </div>
   );

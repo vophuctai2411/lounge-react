@@ -21,7 +21,7 @@ function Post({ data }: PostType) {
     queryKey: ["categories_Query"],
     queryFn: () =>
       get_all_categories().then((response) => response.data.postCategories),
-    staleTime: 10000,
+    staleTime: Infinity,
   });
 
   const postChip = allCategories?.filter(
