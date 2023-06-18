@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import commentReducer from "@/slices/commentsSlice";
-import listPostReducer from "@/slices/listPostSlice"
+import listPostReducer from "@/slices/listPostSlice";
+import categoriesReducer from "@/slices/categorySlice";
 
 export const store = configureStore({
   reducer: {
     comments: commentReducer,
-    listPost: listPostReducer
+    listPost: listPostReducer,
+    categories: categoriesReducer,
   },
 });
 

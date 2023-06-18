@@ -1,25 +1,34 @@
 import { get_all_categories } from "@/services/community";
 import "./index.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import filter_icon from "@/assets/icons/filter.svg";
 import CategoryFilterModal from "../category-filter-modal";
 import { categoryType } from "@/types/components.type";
 import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-function Categories({ setChosenCategory }: any) {
+function Categories({ chosenCategory, setChosenCategory }: any) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [showCategories, setShowCategories] = useState<number[]>([]);
 
-  const { data: allCategories } = useQuery({
-    queryKey: ["categories_Query"],
-    queryFn: () =>
-      get_all_categories().then((response) => response.data.postCategories),
-    onSuccess: (data) => {
-      const postCategories: categoryType[] = data;
-      setShowCategories(postCategories.map((i) => i.id));
-    },
-    staleTime: Infinity,
-  });
+  // const { data: allCategories } = useQuery({
+  //   queryKey: ["categories_Query"],
+  //   queryFn: () =>
+  //     get_all_categories().then((response) => response.data.postCategories),
+  //   onSuccess: (data) => {
+  //     const postCategories: categoryType[] = data;
+  //     setShowCategories(postCategories.map((i) => i.id));
+  //   },
+  //   staleTime: Infinity,
+  // });
+
+  let allCategories = useSelector((state: RootState) => state.categories);
+
+  useEffect(() => {
+    setShowCategories(allCategories?.map((i) => i.id));
+    setChosenCategory(0);
+  }, [allCategories]);
 
   return (
     allCategories && (
@@ -33,7 +42,13 @@ function Categories({ setChosenCategory }: any) {
 
         <ul className="filter_category_list">
           <li key="0" onClick={() => setChosenCategory(0)}>
-            <input type="radio" id="0" name="postCategoryGroup" />
+            <input
+              type="radio"
+              id="0"
+              name="postCategoryGroup"
+              checked={0 == chosenCategory}
+              onChange={() => {}}
+            />
             <label htmlFor="0">전체</label>
           </li>
           {allCategories.map((i: any) => {
@@ -47,6 +62,8 @@ function Categories({ setChosenCategory }: any) {
                     id={category_list_key}
                     name="postCategoryGroup"
                     onClick={() => setChosenCategory(i.id)}
+                    checked={i.id == chosenCategory}
+                    onChange={() => {}}
                   />
                   <label htmlFor={category_list_key}>{i.name}</label>
                 </li>

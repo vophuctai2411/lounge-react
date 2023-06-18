@@ -2,6 +2,11 @@ import "./App.scss";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./routes/router";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { getMyInfo, get_all_categories } from "./services/community";
+import { categoryType } from "./types/components.type";
+import { useDispatch } from "react-redux";
+import { saveCategories } from "./slices/categorySlice";
 
 const URLSearch = new URLSearchParams(location.search);
 axios.defaults.headers.common["C9"] = URLSearch.get("C9");
@@ -48,10 +53,29 @@ axios.interceptors.response.use(
 );
 
 function App() {
+  const dispatch = useDispatch();
   const isErrorPage =
     (!URLSearch.get("Authorization") || !URLSearch.get("userId")) &&
     !window.location.pathname.includes("/404");
   if (isErrorPage) window.location.replace("/404");
+  else {
+    useQuery({
+      queryKey: ["categories_Query"],
+      queryFn: () =>
+        get_all_categories().then((response) => response.data.postCategories),
+      onSuccess: (data) => {
+        const postCategories: categoryType[] = data;
+        dispatch(saveCategories(postCategories));
+      },
+      staleTime: Infinity,
+    });
+
+    useQuery({
+      queryKey: ["myInfo"],
+      queryFn: () => getMyInfo().then((res) => res.data.user),
+      staleTime: Infinity,
+    });
+  }
 
   return (
     <BrowserRouter>

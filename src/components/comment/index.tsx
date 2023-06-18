@@ -5,7 +5,11 @@ import Reaction from "../reaction";
 import default_avatar from "@/assets/images/deafault_avatar.svg";
 import Modal from "../modal";
 import { useQuery } from "@tanstack/react-query";
-import { getMyInfo, deleteComment } from "@/services/community";
+import {
+  getMyInfo,
+  deleteComment,
+  getCommentsByPostID,
+} from "@/services/community";
 import { useState } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import {
@@ -14,6 +18,8 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { saveComments } from "@/slices/commentsSlice";
 
 function Comment({ data, isReply, setParentID }: any) {
   //my comment - text - sua xoa
@@ -157,22 +163,15 @@ function MyCommentModal({ isIcon, onClose, openConfirm, cmtID }: any) {
 }
 
 function ConfirmModal({ postID, cmtID, onClose }: any) {
+  const dispatch = useDispatch();
+
   async function remove() {
-    await deleteComment(postID, cmtID);
-
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          staleTime: Infinity,
-        },
-      },
-    });
-
-    await queryClient.refetchQueries({
-      queryKey: ["comments_Query", postID],
-      type: "active",
-      exact: true,
-    });
+    const res = await deleteComment(postID, cmtID);
+    if (res.data.success)
+      getCommentsByPostID(postID).then((response) => {
+        const comments = response.data.comments;
+        dispatch(saveComments(comments));
+      });
 
     onClose();
   }

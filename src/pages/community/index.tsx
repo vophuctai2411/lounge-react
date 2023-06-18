@@ -64,8 +64,6 @@ function Community() {
     setPage(1);
   }, [chosenCategory]);
 
-  console.log("community");
-
   return (
     <div className="wrap">
       <Header>
@@ -84,7 +82,10 @@ function Community() {
         </>
       </Header>
       <div className="posts">
-        <Categories setChosenCategory={setChosenCategory} />
+        <Categories
+          chosenCategory={chosenCategory}
+          setChosenCategory={setChosenCategory}
+        />
 
         <PostList
           data={postList}

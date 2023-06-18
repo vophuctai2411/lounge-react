@@ -14,7 +14,7 @@ function CommentList({ postID, setParentID }: any) {
 
   let comments = useSelector((state: RootState) => state.comments);
 
-  useQuery({
+  const { refetch } = useQuery({
     queryKey: ["comments_Query", postID],
     queryFn: () =>
       getCommentsByPostID(postID).then((response) => response.data.comments),
@@ -24,38 +24,56 @@ function CommentList({ postID, setParentID }: any) {
     enabled: comments.length == 0 || comments[0]?.post_id !== postID,
   });
 
-  console.log(comments.length);
+  const listTagOder = [
+    { key: "earliest", name: "등록순" },
+    { key: "popular", name: "인기순" },
+    { key: "latest", name: "최신순" },
+  ];
+
+  const [key, setKey] = useState("earliest");
+
+  function selectedOrder(comments: any[]) {
+    const newCommentItems = comments?.slice().sort((a: any, b: any): any => {
+      if (key === "latest") {
+        return b.id - a.id || b.emotion.like - a.emotion.like;
+      } else if (key === "popular") {
+        return (
+          b.emotion.like - a.emotion.like ||
+          a.emotion.dislike - b.emotion.dislike ||
+          a.id - b.id
+        );
+      } else if (key === "earliest") {
+        return a.id - b.id || b.emotion.like - a.emotion.like;
+      }
+    });
+
+    return newCommentItems;
+  }
+
+  //apply filter before reder
+  comments = selectedOrder(comments);
 
   return (
     <>
       <ul className="comment_order">
-        <li>
-          <input
-            type="radio"
-            id="earliest"
-            defaultValue="earliest"
-            name="comment_oder_group"
-          />
-          <label htmlFor="earliest">등록순</label>
-        </li>
-        <li>
-          <input
-            type="radio"
-            id="popular"
-            defaultValue="popular"
-            name="comment_oder_group"
-          />
-          <label htmlFor="popular">인기순</label>
-        </li>
-        <li>
-          <input
-            type="radio"
-            id="latest"
-            defaultValue="latest"
-            name="comment_oder_group"
-          />
-          <label htmlFor="latest">최신순</label>
-        </li>
+        {listTagOder.map((i) => (
+          <li
+            key={i.key}
+            onClick={() => {
+              setKey(i.key);
+              refetch();
+            }}
+          >
+            <input
+              type="radio"
+              id={i.key}
+              name="comment_oder_group"
+              checked={i.key == key}
+              onChange={() => {}}
+            />
+            <label htmlFor={i.key}>{i.name}</label>
+          </li>
+        ))}
       </ul>
 
       <div className="comment_content">
