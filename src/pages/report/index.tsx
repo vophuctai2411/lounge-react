@@ -1,12 +1,14 @@
 import { useState } from "react";
 import "./index.scss";
 import Header from "@/components/header";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { reportPostAndComment } from "@/services/community";
+import Modal from "@/components/modal";
 
 function Report() {
   const [text, setText] = useState<string>("");
-  const [reason, setReason] = useState<string>("");
+  const [reason, setReason] = useState<string>("잘못된 정보");
+  const [isShowModal, setIsShowModal] = useState(false);
 
   const reportType = [
     {
@@ -35,29 +37,23 @@ function Report() {
     },
   ];
 
-  const [searchParams] = useSearchParams();
-
-  async function report() {
-    const res = await reportPostAndComment({
-      type: searchParams.get("type"), //1report user 2report post 3report comment
-      reportedUserId: searchParams.get("reportedUserId"),
-      boardId: searchParams.get("boardId"),
-      postId: searchParams.get("postId"),
-      commentId: searchParams.get("commentId"),
-      reason: reason,
-      reasonDetail: text,
-    });
-
-    if (res.data.success) window.history.back();
-  }
-
   return (
     <div className="wrap">
       <Header title="신고하기">
-        <button className="header_activity_right_btn" onClick={() => report()}>
+        <button
+          className="header_activity_right_btn"
+          onClick={() => setIsShowModal(true)}
+        >
           신고
         </button>
       </Header>
+      {isShowModal && (
+        <ConfirmModal
+          reason={reason}
+          text={text}
+          onClose={() => setIsShowModal(false)}
+        />
+      )}
       <main>
         <section className="report_wrap">
           <div className="report_container">
@@ -71,8 +67,9 @@ function Report() {
                   <input
                     type="radio"
                     id={report.id}
-                    defaultValue={report.value}
                     name="report-type-group"
+                    checked={reason == report.value}
+                    onChange={() => {}}
                   />
                   <span />
                   <label htmlFor={report.id}>{report.value}</label>
@@ -91,6 +88,44 @@ function Report() {
         </section>
       </main>
     </div>
+  );
+}
+
+function ConfirmModal({ onClose, reason, text }: any) {
+  const [searchParams] = useSearchParams();
+
+  async function report() {
+    const res = await reportPostAndComment({
+      type: searchParams.get("type"), //1report user 2report post 3report comment
+      reportedUserId: searchParams.get("reportedUserId"),
+      boardId: searchParams.get("boardId"),
+      postId: searchParams.get("postId"),
+      commentId: searchParams.get("commentId"),
+      reason: reason,
+      reasonDetail: text,
+    });
+
+    if (res.data.success) window.history.back();
+  }
+
+  return (
+    <Modal
+      content={
+        <div className="modal_des_box">
+          <p>신고하시겠습니까?</p>
+        </div>
+      }
+      footer={
+        <>
+          <button className="acceptButton" onClick={() => report()}>
+            확인
+          </button>
+          <button className="cancelButton" onClick={() => onClose()}>
+            취소
+          </button>
+        </>
+      }
+    />
   );
 }
 

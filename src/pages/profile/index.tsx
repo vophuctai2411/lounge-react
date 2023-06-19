@@ -7,12 +7,14 @@ import { useQuery } from "@tanstack/react-query";
 import Modal from "@/components/modal";
 import more_action_icon from "@/assets/icons/more_action.svg";
 import { useLocation, useNavigate } from "react-router-dom";
+import default_avatar from "@/assets/images/deafault_avatar.svg";
 
 function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mineOrPick, setMineOrPick] = useState(0);
   const [postResponse, setPostResponse] = useState<any>(null);
+  const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
 
   const [isShowMoreModal, setIsShowMoreModal] = useState(false);
@@ -22,11 +24,51 @@ function Profile() {
       if (mineOrPick) {
         const res = await get_pickposts(page);
         if (res.data.success) {
+          setPostList((preState) => {
+            if (page == 1) {
+              return res.data.pickedPosts.data;
+            }
+
+            const fisrtResponse = res.data.pickedPosts.data[0];
+            const existedIdArr = preState?.reduce(
+              (previousArray: any[], currentItem: any) => [
+                ...previousArray,
+                currentItem.id,
+              ],
+              []
+            );
+            if (
+              existedIdArr.includes(fisrtResponse?.id) ||
+              res.data.pickedPosts.data.length == 0
+            )
+              return preState;
+            else return [...preState, ...res.data.pickedPosts.data];
+          });
           setPostResponse(res.data.pickedPosts);
         }
       } else {
         const res = await get_myposts(page);
         if (res.data.success) {
+          setPostList((preState) => {
+            if (page == 1) {
+              return res.data.posts.data;
+            }
+
+            const fisrtResponse = res.data.posts.data[0];
+            const existedIdArr = preState?.reduce(
+              (previousArray: any[], currentItem: any) => [
+                ...previousArray,
+                currentItem.id,
+              ],
+              []
+            );
+            if (
+              existedIdArr.includes(fisrtResponse?.id) ||
+              res.data.posts.data.length == 0
+            )
+              return preState;
+            else return [...preState, ...res.data.posts.data];
+          });
           setPostResponse(res.data.posts);
         }
       }
@@ -60,7 +102,10 @@ function Profile() {
         <section className="profile_wrap">
           <div className="profile_container">
             <div className="profile_img">
-              <img src={myInfo?.profile_image?.url_180} alt="프로필 이미지" />
+              <img
+                src={myInfo?.profile_image?.url_180 || default_avatar}
+                alt="프로필 이미지"
+              />
             </div>
             <div
               className="profile_info"
@@ -102,7 +147,7 @@ function Profile() {
 
         {postResponse && (
           <PostList
-            data={postResponse?.data}
+            data={postList}
             newPage={() => setPage((page) => page + 1)}
             isLastPage={postResponse?.current_page === postResponse?.last_page}
           />

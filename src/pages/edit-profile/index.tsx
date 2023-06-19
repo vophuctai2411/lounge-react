@@ -17,6 +17,12 @@ function EditProfile() {
 
   const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
   const [isShowImageModal, setIsShowImageModal] = useState(false);
+  const [avatar, setAvatar] = useState<any>({
+    file: null,
+    url: "",
+    type: "old",
+  });
+  const [name, setName] = useState<string>();
 
   useQuery({
     queryKey: ["myInfo"],
@@ -30,15 +36,8 @@ function EditProfile() {
       };
       setAvatar(avatarInfo);
     },
-    staleTime: Infinity,
+    enabled: !(name || avatar.url),
   });
-
-  const [avatar, setAvatar] = useState<any>({
-    file: null,
-    url: "",
-    type: "old",
-  });
-  const [name, setName] = useState<string>();
 
   const setDefaultAvatar = () => {
     setAvatar({ type: "default" });
