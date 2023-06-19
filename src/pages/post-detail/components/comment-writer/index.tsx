@@ -14,12 +14,16 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { saveComments } from "@/slices/commentsSlice";
 import { useDispatch } from "react-redux";
 
-function CommentWriter({ postID, parentID, setParentID }: any) {
+function CommentWriter({
+  postID,
+  parentID,
+  setParentID,
+  refetchPostDetail,
+}: any) {
   const [textValue, setTextValue] = useState("");
   const [isShowIconModal, setIsShowIconModal] = useState(false);
   const [selectedPackgeID, setSelectedPackageID] = useState();
   const [chosenIcon, setChosenIcon] = useState<any>();
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const sendMessage = async () => {
@@ -54,6 +58,7 @@ function CommentWriter({ postID, parentID, setParentID }: any) {
       //   dispatch(saveComments(comments));
       //   setParentID(null);
       // });
+      refetchPostDetail();
 
       await queryClient.prefetchQuery({
         queryKey: ["comments_Query", postID],

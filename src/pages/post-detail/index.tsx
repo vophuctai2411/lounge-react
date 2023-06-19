@@ -35,10 +35,10 @@ function PostDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
-  const { data } = useQuery({
+
+  const { data, refetch: refetchPostDetail } = useQuery({
     queryKey: ["postDetail_Query", id],
     queryFn: () => getPostByID(id).then((response) => response.data?.post),
-    staleTime: Infinity,
   });
 
   const [parentID, setParentID] = useState(null);
@@ -61,7 +61,11 @@ function PostDetail() {
     const res = await pickOrUnpickPost(data.id);
 
     if (res.data.success) {
-      if (!isPostPick) setShowModalType("bookmark_success");
+      refetchPostDetail();
+
+      if (!isPostPick) {
+        setShowModalType("bookmark_success");
+      }
       setIsPostPick((preStt: any) => !preStt);
     }
   }
@@ -127,6 +131,7 @@ function PostDetail() {
                 postID={data?.id}
                 parentID={parentID}
                 setParentID={setParentID}
+                refetchPostDetail={refetchPostDetail}
               />
             </div>
           </div>

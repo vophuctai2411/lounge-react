@@ -28,7 +28,7 @@ function CommentList({ postID, setParentID }: any) {
     enabled: comments?.length == 0 || comments[0]?.post_id !== postID,
   });
 
-  comments = data;
+  if (data) comments = data;
 
   const listTagOder = [
     { key: "earliest", name: "등록순" },

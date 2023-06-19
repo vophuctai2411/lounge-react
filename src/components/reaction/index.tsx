@@ -17,8 +17,8 @@ function Reaction({
   const [like_count, setLike] = useState(like);
   const [dislike_count, setDislike] = useState(dislike);
 
-  const likeAction = () => {
-    likeAPI(postID, commentID);
+  const likeAction = async () => {
+    await likeAPI(postID, commentID);
     switch (activeButton) {
       case -1:
         setActiveButton(1);
@@ -36,8 +36,8 @@ function Reaction({
     }
   };
 
-  const dislikeAction = () => {
-    dislikeAPI(postID, commentID);
+  const dislikeAction = async () => {
+    await dislikeAPI(postID, commentID);
     switch (activeButton) {
       case -1:
         setActiveButton(2);

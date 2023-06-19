@@ -151,6 +151,7 @@ function Post({ data }: PostType) {
             isAuthorLike={data.is_auth_user_liked}
             isAuthorDislike={data.is_auth_user_disliked}
             postID={data.id}
+            key={Math.random()}
           />
           <button className="post_comment_btn">
             <img src={comment_icon} alt="댓글" />
