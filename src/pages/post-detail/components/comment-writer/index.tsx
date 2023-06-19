@@ -23,6 +23,11 @@ function CommentWriter({ postID, parentID, setParentID }: any) {
   const queryClient = useQueryClient();
 
   const sendMessage = async () => {
+    if (!textValue) {
+      alert("댓글을 입력해주세요.");
+      return;
+    }
+
     let response;
     if (chosenIcon !== undefined) {
       const payload = {

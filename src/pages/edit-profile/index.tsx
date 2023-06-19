@@ -22,7 +22,7 @@ function EditProfile() {
     url: "",
     type: "old",
   });
-  const [name, setName] = useState<string>();
+  const [name, setName] = useState<string>("");
 
   useQuery({
     queryKey: ["myInfo"],
@@ -55,6 +55,12 @@ function EditProfile() {
   };
 
   async function submitEdit() {
+    if (name.length < 3) {
+      alert("닉네임은 3글자 이상 입력해주세요.");
+      setIsShowConfirmModal(false);
+      return;
+    }
+
     await patchName(name);
     switch (avatar.type) {
       case "old":

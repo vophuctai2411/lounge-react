@@ -29,7 +29,7 @@ function Header(props: PropsWithChildren<HeaderProps>) {
 
         <div className="header_title">
           {!location.pathname.includes("board") && (
-            <button className="back_btn" onClick={() => navigate(-1)}>
+            <button className="back_btn" onClick={() => history.back()}>
               <img src={goBackIcon} alt="뒤로가기" />
             </button>
           )}

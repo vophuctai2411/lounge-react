@@ -67,21 +67,20 @@ function PostWriter() {
   }
 
   const openFileDialog = () => {
-    // if (this.postData.postImages.length >= 10) {
-    //   alert("이미지는 최대 10장까지 첨부 가능합니다.");
-    //   return;
-    // }
+    if (postImages.length >= 10) {
+      alert("이미지는 최대 10장까지 첨부 가능합니다.");
+      return;
+    }
     multipleImageRef.current?.click();
   };
 
   const handleFileSelect = (e: any) => {
     const fileArray = e.target.files;
 
-    // let input = this.$refs.fileInput;
-    // if (this.postData.postImages.length + input?.files?.length > 10) {
-    //   alert("이미지는 최대 10장까지 첨부 가능합니다.");
-    //   return;
-    // }
+    if (postImages.length + fileArray?.length > 10) {
+      alert("이미지는 최대 10장까지 첨부 가능합니다.");
+      return;
+    }
 
     let chosenImages: any[] = [];
     for (let i = 0; i < fileArray.length; i++) {
@@ -355,6 +354,18 @@ function ConfirmModal({
   const queryClient = useQueryClient();
 
   const submitPost = async () => {
+    if (!chosenCategory) {
+      onClose();
+      alert("게시글의 주제를 선택해 주세요.");
+      return;
+    }
+
+    if (!postContent) {
+      onClose();
+      alert("게시글을 입력해 주세요.");
+      return;
+    }
+
     let formData = new FormData();
     formData.append("isSecret", isSecret.toString());
     formData.append("postCategoryId", chosenCategory.id);
