@@ -32,6 +32,8 @@ type detailModalType =
   | false;
 
 function PostDetail() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const { data } = useQuery({
     queryKey: ["postDetail_Query", id],
@@ -66,7 +68,7 @@ function PostDetail() {
 
   return (
     <div className="wrap">
-      <Header>
+      <Header goBack={() => navigate("/board" + location.search)}>
         <>
           <button onClick={() => changePickStt()}>
             <img

@@ -26,6 +26,7 @@ function PostWriter() {
   const [isSecret, setIsSecret] = useState(0);
   const [chosenCategory, setChosenCategory] = useState<any>();
   const [isShowModal, setIsShowModal] = useState<number | boolean>(false);
+  const [removedImageIds, setRemoveImageIds] = useState<any[]>([]);
 
   let { id: postID } = useParams();
   const isEdit = !!postID;
@@ -94,36 +95,11 @@ function PostWriter() {
     setPostImages((preState) => [...preState, ...chosenImages]);
   };
 
-  const removeAFile = (index: number) => {
+  const removeAFile = (index: number, file: any) => {
     const newArr = postImages.filter((i, ind) => ind !== index);
     setPostImages(newArr);
-  };
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryClient = useQueryClient();
-
-  const submitPost = async () => {
-    let formData = new FormData();
-    formData.append("isSecret", isSecret.toString());
-    formData.append("postCategoryId", chosenCategory.id);
-    formData.append("subject", "default subject");
-    formData.append("content", postContent);
-    for (let i = 0; i < postImages.length; i++) {
-      formData.append("uploadedImages[]", postImages[i].file);
-    }
-
-    const res = isEdit
-      ? await EditPost(formData, postID)
-      : await writeNewPost(formData);
-    if (res.data.success) {
-      const id = postID || res.data.newPost.id;
-      await queryClient.prefetchQuery({
-        queryKey: ["postDetail_Query", id],
-        queryFn: () => getPostByID(id).then((response) => response.data?.post),
-      });
-      navigate("/detail/" + id + location.search);
-    }
+    if (file?.id) setRemoveImageIds((preState) => [...preState, file.id]);
   };
 
   const totalSize = postImages.reduce(
@@ -177,6 +153,7 @@ function PostWriter() {
           chosenCategory={chosenCategory}
           postContent={postContent}
           postImages={postImages}
+          removedImageIds={removedImageIds}
         />
       )}
 
@@ -189,7 +166,7 @@ function PostWriter() {
                 {postImages.map((img, index) => (
                   <div key={`images-list-${index}`}>
                     <img src={img.url} />
-                    <button onClick={() => removeAFile(index)}>
+                    <button onClick={() => removeAFile(index, img)}>
                       <img src={writer_close_image} alt="writer close image" />
                     </button>
                     <span>{(img.size / (1024 * 1024)).toFixed(2)}MB</span>
@@ -348,6 +325,7 @@ function ConfirmModal({
   chosenCategory,
   postContent,
   postImages,
+  removedImageIds,
 }: any) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -372,8 +350,12 @@ function ConfirmModal({
     formData.append("subject", "default subject");
     formData.append("content", postContent);
     for (let i = 0; i < postImages.length; i++) {
-      formData.append("uploadedImages[]", postImages[i].file);
+      if (postImages[i]?.file)
+        formData.append("uploadedImages[]", postImages[i].file);
     }
+    removedImageIds.forEach((imageId: any) => {
+      if (imageId) formData.append("removedImageIds[]", imageId);
+    });
 
     const res = isEdit
       ? await EditPost(formData, postID)
