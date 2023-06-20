@@ -77,8 +77,9 @@ function Community() {
   }, [chosenCategory]);
 
   function scrollFunction() {
+    console.log(window.scrollY);
     localStorage.setItem("boardScroll", JSON.stringify(window.scrollY));
-    setIsUseStorageData(false);
+    // setIsUseStorageData(false);
 
     if (
       document.body.scrollTop > 50 ||
@@ -98,10 +99,10 @@ function Community() {
       const boardData = localStorage.getItem("boardData");
       const boardchosenCategory = localStorage.getItem("boardchosenCategory");
 
-      boardPage && setPage(JSON.parse(boardPage));
+      // boardPage && setPage(JSON.parse(boardPage));
       boardData && setPostList(JSON.parse(boardData));
-      boardchosenCategory &&
-        setChosenCategory(Number(JSON.parse(boardchosenCategory)));
+      // boardchosenCategory &&
+      //   setChosenCategory(Number(JSON.parse(boardchosenCategory)));
 
       setIsUseStorageData(true);
     }
@@ -110,22 +111,13 @@ function Community() {
   }, []);
 
   useEffect(() => {
-    if (isUseStorageData) {
-      const boardScroll = localStorage.getItem("boardScroll");
+    console.log(postList.length);
 
-      boardScroll &&
-        setTimeout(() => {
-          // scrollTo(0, JSON.parse(boardScroll));
-          console.log(boardScroll);
-
-          // window.scrollTo({
-          //   top: JSON.parse(boardScroll),
-          //   // behavior: "smooth",
-          // });
-
-          scrollTo(0, JSON.parse(boardScroll));
-        }, 3000);
-    }
+    // if (isUseStorageData) {
+    //   const boardScroll = localStorage.getItem("boardScroll");
+    //   boardScroll && scrollTo(0, JSON.parse(boardScroll));
+    //   setIsUseStorageData(false);
+    // }
   }, [postList]);
 
   useEffect(() => {
