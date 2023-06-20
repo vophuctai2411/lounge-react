@@ -15,8 +15,10 @@ function Community() {
   const [postResponse, setPostResponse] = useState<any>(null);
   const [postList, setPostList] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [chosenCategory, setChosenCategory] = useState<number>();
+  const [chosenCategory, setChosenCategory] = useState<number>(0);
   const [isShowScrollTop, setIsShowScrollTop] = useState(false);
+
+  const [isUseStorageData, setIsUseStorageData] = useState(false);
 
   const getData = async () => {
     const params = {
@@ -58,18 +60,26 @@ function Community() {
   }
 
   useEffect(() => {
-    if (page != postResponse?.current_page || page == 1) getData();
+    if (isUseStorageData) {
+      //setIsUseStorageData(false);
+      return;
+    }
+
+    if (page > postResponse?.current_page || page == 1) getData();
   }, [page, chosenCategory]);
 
   useEffect(() => {
+    if (isUseStorageData) {
+      // setIsUseStorageData(false);
+      return;
+    }
     setPage(1);
   }, [chosenCategory]);
 
-  window.onscroll = function () {
-    scrollFunction();
-  };
-
   function scrollFunction() {
+    localStorage.setItem("boardScroll", JSON.stringify(window.scrollY));
+    setIsUseStorageData(false);
+
     if (
       document.body.scrollTop > 50 ||
       document.documentElement.scrollTop > 50
@@ -79,6 +89,55 @@ function Community() {
       setIsShowScrollTop(false);
     }
   }
+
+  useEffect(() => {
+    window.addEventListener("scroll", scrollFunction, false);
+
+    if (localStorage.getItem("boardPage")) {
+      const boardPage = localStorage.getItem("boardPage");
+      const boardData = localStorage.getItem("boardData");
+      const boardchosenCategory = localStorage.getItem("boardchosenCategory");
+
+      boardPage && setPage(JSON.parse(boardPage));
+      boardData && setPostList(JSON.parse(boardData));
+      boardchosenCategory &&
+        setChosenCategory(Number(JSON.parse(boardchosenCategory)));
+
+      setIsUseStorageData(true);
+    }
+
+    return () => window.removeEventListener("scroll", scrollFunction, false);
+  }, []);
+
+  useEffect(() => {
+    if (isUseStorageData) {
+      const boardScroll = localStorage.getItem("boardScroll");
+
+      boardScroll &&
+        setTimeout(() => {
+          // scrollTo(0, JSON.parse(boardScroll));
+          console.log(boardScroll);
+
+          // window.scrollTo({
+          //   top: JSON.parse(boardScroll),
+          //   // behavior: "smooth",
+          // });
+
+          scrollTo(0, JSON.parse(boardScroll));
+        }, 3000);
+    }
+  }, [postList]);
+
+  useEffect(() => {
+    return () => {
+      localStorage.setItem(
+        "boardchosenCategory",
+        JSON.stringify(chosenCategory)
+      );
+      localStorage.setItem("boardData", JSON.stringify(postList));
+      localStorage.setItem("boardPage", JSON.stringify(page));
+    };
+  }, [chosenCategory, postList, page]);
 
   return (
     <div className="wrap">

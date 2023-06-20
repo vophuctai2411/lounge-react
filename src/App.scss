@@ -294,3 +294,8 @@ body {
 이미지 display:block랑 width,height 100 세팅
 input, textarea 글자컬러, 크기랑 placeholder 맞추기
 */
+
+::selection {
+  background: $color-primary-01;
+  color: #fff;
+}

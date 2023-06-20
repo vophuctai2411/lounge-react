@@ -7,6 +7,7 @@ import { getMyInfo, get_all_categories } from "./services/community";
 import { categoryType } from "./types/components.type";
 import { useDispatch } from "react-redux";
 import { saveCategories } from "./slices/categorySlice";
+import { useEffect } from "react";
 
 const URLSearch = new URLSearchParams(location.search);
 axios.defaults.headers.common["C9"] = URLSearch.get("C9");
@@ -76,6 +77,10 @@ function App() {
       staleTime: Infinity,
     });
   }
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <BrowserRouter>
