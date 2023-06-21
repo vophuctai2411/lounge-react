@@ -3,8 +3,6 @@ import "./index.scss";
 import { useEffect, useState } from "react";
 import filter_icon from "@/assets/icons/filter.svg";
 import CategoryFilterModal from "../category-filter-modal";
-import { categoryType } from "@/types/components.type";
-import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
@@ -12,22 +10,11 @@ function Categories({ chosenCategory, setChosenCategory }: any) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [showCategories, setShowCategories] = useState<number[]>([]);
 
-  // const { data: allCategories } = useQuery({
-  //   queryKey: ["categories_Query"],
-  //   queryFn: () =>
-  //     get_all_categories().then((response) => response.data.postCategories),
-  //   onSuccess: (data) => {
-  //     const postCategories: categoryType[] = data;
-  //     setShowCategories(postCategories.map((i) => i.id));
-  //   },
-  //   staleTime: Infinity,
-  // });
-
   let allCategories = useSelector((state: RootState) => state.categories);
 
   useEffect(() => {
     setShowCategories(allCategories?.map((i) => i.id));
-    setChosenCategory(0);
+    if (!chosenCategory) setChosenCategory(0);
   }, [allCategories]);
 
   return (

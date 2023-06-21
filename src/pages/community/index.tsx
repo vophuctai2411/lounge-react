@@ -13,17 +13,35 @@ import pencil_icon from "@/assets/icons/pencil.svg";
 function Community() {
   const location = useLocation();
   const [postResponse, setPostResponse] = useState<any>(null);
-  const [postList, setPostList] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
-  const [chosenCategory, setChosenCategory] = useState<number>(0);
+
+  const boardData = localStorage.getItem("boardData");
+  const [postList, setPostList] = useState<any[]>(JSON.parse(boardData) || []);
+
+  const boardPage = localStorage.getItem("boardPage");
+  const [page, setPage] = useState(JSON.parse(boardPage) || 1);
+
+  const boardCate = localStorage.getItem("boardchosenCategory");
+  const [chosenCategory, setChosenCategory] = useState<number>(
+    JSON.parse(boardCate) || 0
+  );
   const [isShowScrollTop, setIsShowScrollTop] = useState(false);
 
-  const [isUseStorageData, setIsUseStorageData] = useState(false);
+  const [isUseStorageData, setIsUseStorageData] = useState(true);
+  const perPage = 30;
+
+  const boardScroll = localStorage.getItem("boardScroll");
+
+  useEffect(() => {
+    if (isUseStorageData) {
+      scrollTo(0, JSON.parse(boardScroll));
+      setIsUseStorageData(false);
+    }
+  }, [postList]);
 
   const getData = async () => {
     const params = {
       ...(chosenCategory && { "postCategories[]": chosenCategory }),
-      perPage: 5,
+      perPage,
       page: page,
     };
     const response = await getAllPost(params);
@@ -61,25 +79,27 @@ function Community() {
 
   useEffect(() => {
     if (isUseStorageData) {
-      //setIsUseStorageData(false);
       return;
     }
 
-    if (page > postResponse?.current_page || page == 1) getData();
-  }, [page, chosenCategory]);
+    if (
+      page > postResponse?.current_page ||
+      page == 1 ||
+      (postResponse == undefined && chosenCategory == JSON.parse(boardCate))
+    )
+      getData();
+  }, [page, chosenCategory, isUseStorageData]);
 
   useEffect(() => {
     if (isUseStorageData) {
-      // setIsUseStorageData(false);
       return;
     }
+
     setPage(1);
   }, [chosenCategory]);
 
   function scrollFunction() {
-    console.log(window.scrollY);
     localStorage.setItem("boardScroll", JSON.stringify(window.scrollY));
-    // setIsUseStorageData(false);
 
     if (
       document.body.scrollTop > 50 ||
@@ -93,43 +113,20 @@ function Community() {
 
   useEffect(() => {
     window.addEventListener("scroll", scrollFunction, false);
-
-    if (localStorage.getItem("boardPage")) {
-      const boardPage = localStorage.getItem("boardPage");
-      const boardData = localStorage.getItem("boardData");
-      const boardchosenCategory = localStorage.getItem("boardchosenCategory");
-
-      // boardPage && setPage(JSON.parse(boardPage));
-      boardData && setPostList(JSON.parse(boardData));
-      // boardchosenCategory &&
-      //   setChosenCategory(Number(JSON.parse(boardchosenCategory)));
-
-      setIsUseStorageData(true);
-    }
-
     return () => window.removeEventListener("scroll", scrollFunction, false);
   }, []);
 
   useEffect(() => {
-    console.log(postList.length);
-
-    // if (isUseStorageData) {
-    //   const boardScroll = localStorage.getItem("boardScroll");
-    //   boardScroll && scrollTo(0, JSON.parse(boardScroll));
-    //   setIsUseStorageData(false);
-    // }
+    localStorage.setItem("boardData", JSON.stringify(postList));
   }, [postList]);
 
   useEffect(() => {
-    return () => {
-      localStorage.setItem(
-        "boardchosenCategory",
-        JSON.stringify(chosenCategory)
-      );
-      localStorage.setItem("boardData", JSON.stringify(postList));
-      localStorage.setItem("boardPage", JSON.stringify(page));
-    };
-  }, [chosenCategory, postList, page]);
+    localStorage.setItem("boardPage", JSON.stringify(page));
+  }, [page]);
+
+  useEffect(() => {
+    localStorage.setItem("boardchosenCategory", JSON.stringify(chosenCategory));
+  }, [chosenCategory]);
 
   return (
     <div className="wrap">
@@ -156,7 +153,7 @@ function Community() {
 
         <PostList
           data={postList}
-          newPage={() => setPage((page) => page + 1)}
+          newPage={() => setPage((page: any) => page + 1)}
           isLastPage={postResponse?.current_page >= postResponse?.last_page}
         />
       </div>
